@@ -13,7 +13,7 @@ const handleFetch = async (endPoint = "", options) => {
     .then((res) => res.json())
     .catch((err) => new Error(`에러 발생: ${err}`));
 };
-console.log();
+
 //** GET  */
 const handleGetAllDocs = async () => await handleFetch();
 
