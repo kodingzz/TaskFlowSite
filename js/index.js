@@ -1,11 +1,5 @@
 "use strict";
-
-//** Notion 이름짓기 */
-// const propMsg = "노션방 이름을 지어주세요.";
-// const result = window.prompt(propMsg, "");
-// console.log(result);
-// const title = document.getElementById("notionTitle");
-// title.textContent = `${result || "아무개"}의 Notion`;
+import { handleGetAllDocs } from "./client.js";
 
 const aEls = document.querySelectorAll("a");
 aEls.forEach((aEl) =>
@@ -17,8 +11,8 @@ aEls.forEach((aEl) =>
 );
 
 window.addEventListener("popstate", function (event) {
-  console.dir(event.state?.page || "home");
-  console.log("뒤로가기 또는 앞으로 가기가 눌렸음");
+  const page = event.state?.page || "home";
+  console.log("뒤로가기 또는 앞으로 가기가 눌렸음", page);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -27,7 +21,15 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(data);
   }
   getAllList();
+
   document
     .getElementById("createDocBtn")
     .addEventListener("click", async () => {});
 });
+
+//** Notion 이름짓기 */
+// const propMsg = "노션방 이름을 지어주세요.";
+// const result = window.prompt(propMsg, "");
+// console.log(result);
+// const title = document.getElementById("notionTitle");
+// title.textContent = `${result || "아무개"}의 Notion`;

@@ -14,20 +14,28 @@ const handleFetch = async (endPoint = "", options) => {
     .catch((err) => new Error(`에러 발생: ${err}`));
 };
 
-// GET
+//** GET  */
 const handleGetAllDocs = async () => await handleFetch();
 
-// GET :id
+//** GET :id */
 const handleGetDocById = async (id) => await handleFetch(id);
 
-// POST
+//** POST */
 const handleCreateDoc = async (id, body) =>
   await handleFetch(id, { method: "POST", body });
 
-// PUT
+//** PUT */
 const handleUpdateDoc = async (id, body) =>
   await handleFetch(id, { method: "PUT", body });
 
-// DELETE
+//** DELETE */
 const handleDeleteDoc = async (id) =>
   await handleFetch(id, { method: "DELETE" });
+
+export {
+  handleGetAllDocs,
+  handleGetDocById,
+  handleCreateDoc,
+  handleUpdateDoc,
+  handleDeleteDoc,
+};
