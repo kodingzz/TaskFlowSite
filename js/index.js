@@ -17,7 +17,17 @@ aEls.forEach((aEl) =>
 );
 
 window.addEventListener("popstate", function (event) {
-  const page = event.state?.page || "home";
   console.dir(event.state?.page || "home");
   console.log("뒤로가기 또는 앞으로 가기가 눌렸음");
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  async function getAllList() {
+    const data = await handleGetAllDocs();
+    console.log(data);
+  }
+  getAllList();
+  document
+    .getElementById("createDocBtn")
+    .addEventListener("click", async () => {});
 });
