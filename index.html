@@ -75,10 +75,17 @@
       </header>
       <section id="editor" contenteditable="false">
         <div class="editor-top">root / dir1 / dir2 / current1</div>
-        <div class="editor-content">
-          <h2>TITLE</h2>
-          <div class="text-block" contenteditable="true"></div>
-        </div>
+        <article class="editor-content">
+          <h2 id="title-display"></h2>
+          <div class="title-container">
+            <textarea
+              id="title-input"
+              class="title-input"
+              placeholder="제목"
+            ></textarea>
+          </div>
+          <div class="text-block"></div>
+        </article>
       </section>
     </main>
     <script type="module" src="./js/index.js"></script>
