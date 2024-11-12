@@ -146,16 +146,17 @@ body {
 }
 
 /* 메인; 나머지 공간에 대한 조절*/
-section {
+#editor {
   flex: 1;
   padding: 20px;
   transition: margin-left 0.3s ease;
 }
+
 /* 사이드바 접힐 때 콘텐츠 확장 */
-.sidebar.hidden ~ section {
+.sidebar.hidden ~ #editor {
   margin-left: 0;
 }
 /* 기본 사이드바 너비만큼 여백 */
-.sidebar ~ section {
+.sidebar ~ #editor {
   margin-left: 250px;
 }
