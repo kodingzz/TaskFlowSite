@@ -37,7 +37,15 @@
       <button id="toggleSidebar" class="sidebar-toggle"></button>
       <section id="editor" contenteditable="false">
         <div class="text-block" contenteditable="true"></div>
-        <title class="title">제목 부분</title>
+        <title id="title">제목 부분</title>
+        <h1 id="title-display"></h1>
+        <div class="title-container">
+          <textarea
+            id="title-input"
+            class="title-input"
+            placeholder="제목을 입력하세요."
+          ></textarea>
+        </div>
       </section>
     </main>
     <script type="module" src="./js/index.js"></script>
