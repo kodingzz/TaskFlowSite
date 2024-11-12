@@ -31,9 +31,12 @@
             </li>
           </ul>
         </nav>
-        <button id="createDocBtn" type="button">ADD</button>
+        <button id="createDocBtn" type="button">새 페이지 추가</button>
       </header>
-      <section>Content</section>
+      <button id="toggleSidebar" class="sidebar-toggle"></button>
+      <section id="editor" contenteditable="false">
+        <div class="text-block" contenteditable="true"></div>
+      </section>
     </main>
     <script type="module" src="./js/index.js"></script>
   </body>
