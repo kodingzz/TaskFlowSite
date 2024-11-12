@@ -22,8 +22,8 @@ const handleGetAllDocs = async () => await handleFetch();
 const handleGetDocById = async (id) => await handleFetch(id);
 
 //** POST */
-const handleCreateDoc = async (id, body) =>
-  await handleFetch(id, { method: "POST", body });
+const handleCreateDoc = async (body) =>
+  await handleFetch("", { method: "POST", body });
 
 //** PUT */
 const handleUpdateDoc = async (id, body) =>
