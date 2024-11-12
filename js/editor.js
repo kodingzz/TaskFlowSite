@@ -3,6 +3,7 @@
 const titleDisplay = document.getElementById("title-display");
 const titleInput = document.getElementById("title-input");
 //const contentInput = document.getElementById("content-input");
+
 function saveTitle() {
   const title = titleInput.value.trim();
   if (title) {
@@ -10,13 +11,6 @@ function saveTitle() {
     titleInput.style.display = "none";
     titleDisplay.style.display = "block";
   }
-}
-
-function editTitle() {
-  titleInput.style.display = "block";
-  titleDisplay.style.display = "none";
-
-  titleInput.value = titleDisplay.textContent.trim();
 }
 
 function editTitle() {
@@ -31,21 +25,11 @@ titleInput.addEventListener("keydown", function (e) {
   }
 });
 
-titleInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    saveTitle();
-  }
-});
-
-titleDisplay.addEventListener("click", function () {
-  editTitle();
-});
 titleDisplay.addEventListener("click", function () {
   editTitle();
 });
 
 // 텍스트 에디터
-
 document.addEventListener("DOMContentLoaded", () => {
   const editor = document.getElementById("editor");
 
