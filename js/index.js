@@ -1,32 +1,31 @@
 "use strict";
 import { handleGetAllDocs } from "./client.js";
 
-const aEls = document.querySelectorAll("a");
-aEls.forEach((aEl) =>
-  aEl.addEventListener("click", function (e) {
-    e.preventDefault();
-    const id = e.currentTarget.dataset.url;
-    history.pushState({ page: id }, "", `/documents/${id}`);
-  })
-);
+// const aEls = document.querySelectorAll("a");
+// aEls.forEach((aEl) =>
+//   aEl.addEventListener("click", function (e) {
+//     e.preventDefault();
+//     const id = e.currentTarget.dataset.url;
+//     history.pushState({ page: id }, "", `/documents/${id}`);
+//   })
+// );
 
-window.addEventListener("popstate", function (event) {
-  const page = event.state?.page || "home";
-  console.log("뒤로가기 또는 앞으로 가기가 눌렸음", page);
-});
-www;
+// window.addEventListener("popstate", function (event) {
+//   const page = event.state?.page || "home";
+//   console.log("뒤로가기 또는 앞으로 가기가 눌렸음", page);
+// });
 
-document.addEventListener("DOMContentLoaded", () => {
-  async function getAllList() {
-    const data = await handleGetAllDocs();
-    console.log(data);
-  }
-  getAllList();
+// document.addEventListener("DOMContentLoaded", () => {
+//   async function getAllList() {
+//     const data = await handleGetAllDocs();
+//     console.log(data);
+//   }
+//   getAllList();
 
-  document
-    .getElementById("createDocBtn")
-    .addEventListener("click", async () => {});
-});
+//   document
+//     .getElementById("createDocBtn")
+//     .addEventListener("click", async () => {});
+// });
 
 //사이드바 닫힘 & 펼침
 document.addEventListener("DOMContentLoaded", () => {
