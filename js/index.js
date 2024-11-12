@@ -15,6 +15,7 @@ import { handleGetAllDocs } from "./client.js";
 //   console.log("뒤로가기 또는 앞으로 가기가 눌렸음", page);
 // });
 
+
 // document.addEventListener("DOMContentLoaded", () => {
 //   async function getAllList() {
 //     const data = await handleGetAllDocs();
@@ -38,9 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-//** Notion 이름짓기 */
+// ** Notion 이름짓기 */
 // const propMsg = "노션방 이름을 지어주세요.";
 // const result = window.prompt(propMsg, "");
 // console.log(result);
-// const title = document.getElementById("notionTitle");
+// const title = document.getElementById("logo");
 // title.textContent = `${result || "아무개"}의 Notion`;

@@ -120,7 +120,7 @@ body {
 }
 /* 마우스 호버 시 효과 */
 .sidebar-nav li a:hover::before {
-  transform: scale(1.5); /*호버 사이즈 조절 */
+  transform: scale(1); /*호버 사이즈 조절 */
   opacity: 1;
 }
 

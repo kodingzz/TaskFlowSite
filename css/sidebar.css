@@ -120,7 +120,7 @@ body {
 }
 /* 마우스 호버 시 효과 */
 .sidebar-nav li a:hover::before {
-  transform: scale(1.5); /*호버 사이즈 조절 */
+  transform: scale(1); /*호버 사이즈 조절 */
   opacity: 1;
 }
 
@@ -146,7 +146,7 @@ body {
 }
 
 /* 메인; 나머지 공간에 대한 조절*/
-section {
+#editor {
   flex: 1;
   padding: 20px;
   transition: margin-left 0.3s ease;
@@ -158,4 +158,9 @@ section {
 /* 기본 사이드바 너비만큼 여백 */
 .sidebar ~ section {
   margin-left: 250px;
+}
+
+/* 사이드바 접힐 때 콘텐츠 확장 */
+.sidebar.hidden ~ #editor {
+  margin-left: 0;
 }
