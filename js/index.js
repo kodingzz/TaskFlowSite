@@ -27,6 +27,17 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", async () => {});
 });
 
+//사이드바 닫힘 & 펼침
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.querySelector(".sidebar");
+  const toggleButton = document.getElementById("toggleSidebar");
+
+  // hidden 토글
+  toggleButton.addEventListener("click", () => {
+    sidebar.classList.toggle("hidden"); // 사이드바 접기/펼치기
+  });
+});
+
 //** Notion 이름짓기 */
 // const propMsg = "노션방 이름을 지어주세요.";
 // const result = window.prompt(propMsg, "");
