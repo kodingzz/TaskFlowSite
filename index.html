@@ -76,7 +76,15 @@
       <section id="editor" contenteditable="false">
         <div class="editor-top">root / dir1 / dir2 / current1</div>
         <div class="editor-content">
-          <h2>TITLE</h2>
+          <h2 id="title-display"></h2>
+          <div class="title-container">
+            <textarea
+              id="title-input"
+              class="title-input"
+              placeholder="제목"
+            ></textarea>
+          </div>
+          <div id="output"></div>
           <div class="text-block" contenteditable="true"></div>
         </div>
       </section>
