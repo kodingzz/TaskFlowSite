@@ -33,3 +33,7 @@ const result = window.prompt(propMsg, "");
 console.log(result);
 const title = document.getElementById("notionTitle");
 title.textContent = `${result || "아무개"}의 Notion`;
+
+console.log("yebin");
+
+console.log("yebin");
