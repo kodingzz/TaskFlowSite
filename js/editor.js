@@ -151,18 +151,20 @@ function setCaretToEnd(element) {
 // 텍스트 입력 처리
 document.getElementById("editor").addEventListener("input", function (e) {
   const currentBlock = document.activeElement;
-
+  console.log(e.data);
   // 텍스트 블록 내에서만 처리
   if (currentBlock && currentBlock.classList.contains("text-block")) {
     const textContent = currentBlock.textContent;
 
     // Markdown 체크 후 변환
-    if (textContent.startsWith("### ") && textContent.length > 4) {
-      createHeaderBlock(currentBlock, "h3", 4); // '### ' -> h3
-    } else if (textContent.startsWith("## ") && textContent.length > 3) {
-      createHeaderBlock(currentBlock, "h2", 3); // '## ' -> h2
-    } else if (textContent.startsWith("# ") && textContent.length > 2) {
-      createHeaderBlock(currentBlock, "h1", 2); // '# ' -> h1
+    if (e.data === " ") {
+      if (textContent.startsWith("###") && textContent.length > 4) {
+        createHeaderBlock(currentBlock, "h3", 4); // '### ' -> h3
+      } else if (textContent.startsWith("##") && textContent.length > 3) {
+        createHeaderBlock(currentBlock, "h2", 3); // '## ' -> h2
+      } else if (textContent.startsWith("#") && textContent.length > 2) {
+        createHeaderBlock(currentBlock, "h1", 2); // '# ' -> h1
+      }
     }
     // 다른 마크다운 처리
     else if (textContent.startsWith("> ")) {
