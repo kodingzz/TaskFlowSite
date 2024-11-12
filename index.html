@@ -8,39 +8,82 @@
   </head>
   <body>
     <main id="wrap">
-      <header class="sidebar">
-        <h1 id="notionTitle" class="sidebar-title"></h1>
-        <div>나 추가22</div>
+      <header id="sidebar" class="sidebar">
+        <div class="sidebar-box">
+          <h1 id="logo" class="sidebar-title">~의 노션</h1>
+          <button id="toggleSidebar" class="sidebar-toggle"><</button>
+        </div>
+        <div class="sidebar-box">
+          <button class="sidebar-search">검색</button>
+        </div>
         <nav class="sidebar-nav">
           <ul>
             <!-- <li class="sidebar-item">
-              <a href="/documents/1" data-url="1">ROOT1</a>
+              <div class="slidebar-item-content">
+                <a href="/documents/1" data-url="1">ROOT1</a>
+                <div class="slidebar-item-btns">
+                  <button class="sidebar-item-add">+</button>
+                  <button class="sidebar-item-remove">-</button>
+                </div>
+              </div>
               <ul>
                 <li class="sidebar-item">
-                  <a href="/documents/3" data-url="3">SUB1</a>
+                  <div class="slidebar-item-content">
+                    <a href="/documents/3" data-url="3">SUB1</a>
+                    <div class="slidebar-item-btns">
+                      <button class="sidebar-item-add">+</button>
+                      <button class="sidebar-item-remove">-</button>
+                    </div>
+                  </div>
                 </li>
                 <li class="sidebar-item">
-                  <a href="/documents/4" data-url="4">SUB2</a>
+                  <div class="slidebar-item-content">
+                    <a href="/documents/4" data-url="4">SUB2</a>
+                    <div class="slidebar-item-btns">
+                      <button class="sidebar-item-add">+</button>
+                      <button class="sidebar-item-remove">-</button>
+                    </div>
+                  </div>
                 </li>
                 <li class="sidebar-item">
-                  <a href="/documents/5" data-url="5">SUB3</a>
+                  <div class="slidebar-item-content">
+                    <a href="/documents/5" data-url="5">SUB3</a>
+                    <div class="slidebar-item-btns">
+                      <button class="sidebar-item-add">+</button>
+                      <button class="sidebar-item-remove">-</button>
+                    </div>
+                  </div>
                 </li>
               </ul>
             </li>
             <li class="sidebar-item">
-              <a href="/documents/2" data-url="2">ROOT2</a>
+              <div class="slidebar-item-content">
+                <a href="/documents/2" data-url="2">ROOT2</a>
+                <div class="slidebar-item-btns">
+                  <button class="sidebar-item-add">+</button>
+                  <button class="sidebar-item-remove">-</button>
+                </div>
+              </div>
             </li> -->
           </ul>
         </nav>
-        <button id="createDocBtn" type="button">새 페이지 추가</button>
+        <div class="sidebar-bottom">
+          <button id="createDocBtn" type="button" class="sidebar-add">
+            새 페이지 추가
+          </button>
+        </div>
       </header>
-      <button id="toggleSidebar" class="sidebar-toggle"></button>
       <section id="editor" contenteditable="false">
-        <div class="text-block" contenteditable="true"></div>
+        <div class="editor-top">root / dir1 / dir2 / current1</div>
+        <div class="editor-content">
+          <h2>TITLE</h2>
+          <div class="text-block" contenteditable="true"></div>
+        </div>
       </section>
     </main>
     <script type="module" src="./js/index.js"></script>
     <script type="module" src="./js/editor.js"></script>
     <script type="module" src="./js/sidebar.js"></script>
+    <script type="module" src="./js/editorTopBar.js"></script>
   </body>
 </html>
