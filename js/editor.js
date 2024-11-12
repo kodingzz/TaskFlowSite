@@ -11,6 +11,14 @@ function saveTitle() {
     titleDisplay.style.display = "block";
   }
 }
+
+function editTitle() {
+  titleInput.style.display = "block";
+  titleDisplay.style.display = "none";
+
+  titleInput.value = titleDisplay.textContent.trim();
+}
+
 function editTitle() {
   titleInput.style.display = "block";
   titleDisplay.style.display = "none";
@@ -22,10 +30,15 @@ titleInput.addEventListener("keydown", function (e) {
     saveTitle();
   }
 });
+
 titleInput.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
     saveTitle();
   }
+});
+
+titleDisplay.addEventListener("click", function () {
+  editTitle();
 });
 titleDisplay.addEventListener("click", function () {
   editTitle();
