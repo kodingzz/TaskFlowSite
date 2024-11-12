@@ -32,3 +32,16 @@ titleInput.addEventListener("keydown", function (e) {
     saveTitle();
   }
 });
+
+const output = document.getElementById("output");
+
+titleInput.addEventListener("input", function () {
+  // 텍스트 내용 가져오기
+  const content = contentInput.value;
+
+  // 마크다운 '/line'을 <hr>로 변환
+  const transformedContent = content.replace(/\/line/g, "<hr>");
+
+  // 변환된 텍스트를 HTML로 출력
+  output.innerHTML = transformedContent;
+});
