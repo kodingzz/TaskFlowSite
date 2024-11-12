@@ -1,4 +1,9 @@
+::-webkit-scrollbar {
+  display: none;
+}
 * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -16,9 +21,12 @@ textarea {
   -webkit-border-radius: 0;
 }
 
-#wrap {
-  width: 100%;
-  height: 100vh;
-  max-height: 100vh;
-  display: flex;
+ul,
+ol,
+li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+  color: white;
 }
