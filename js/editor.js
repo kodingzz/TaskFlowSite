@@ -16,10 +16,8 @@ function createNewEditableBlock(type) {
 function isPreviousBlockList(block) {
   return block && (block.tagName === "UL" || block.tagName === "OL");
 }
-
-// default 텍스트 블록에 대한 키보드 입력 처리
 ///////////////////////////////////////////////////////
-// Enter 키를 누를 때 동작
+
 let isComposing = true;
 
 document.querySelector("#editor").addEventListener("compositionstart", () => {
@@ -28,6 +26,10 @@ document.querySelector("#editor").addEventListener("compositionstart", () => {
 document.querySelector("#editor").addEventListener("compositionend", () => {
   isComposing = true;
 });
+
+///////////////////////////////////////////////////////
+// Enter 키를 누를 때 동작
+
 document.querySelector("#editor").addEventListener("keydown", function (e) {
   const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
   const previousBlock = currentBlock.previousElementSibling;
