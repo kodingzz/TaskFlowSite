@@ -10,26 +10,17 @@ import {
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
-const aEls = document.querySelectorAll(".sidebar-item-content a");
 
 async function loadSidebarDocs() {
-  // 기존 문서 항목 모두 제거
   sidebarItems.innerHTML = "";
-
-  // 모든 문서를 가져와 사이드바에 추가
-
   const documents = await handleGetAllDocs();
 
-  // 문서를 순회하며 사이드바에 추가
   documents.forEach((doc) => {
-    console.log(doc);
-
     addDoc(doc);
   });
 }
 
-async function addDoc(doc) {
-  // 문서 객체 생성
+function makeItem(doc, depth = 1) {
   const li = document.createElement("li");
   li.classList.add("sidebar-item");
 
@@ -52,17 +43,15 @@ async function addDoc(doc) {
   btnRemove.classList.add("sidebar-item-remove");
   btnRemove.textContent = "-";
 
-  const subDocItems = document.createElement("ul");
-
-  divBtns.appendChild(btnAdd);
+  if (depth < 3) {
+    divBtns.appendChild(btnAdd);
+  }
   divBtns.appendChild(btnRemove);
 
   divContent.appendChild(a);
   divContent.appendChild(divBtns);
 
   li.appendChild(divContent);
-  li.appendChild(subDocItems);
-  sidebarItems.appendChild(li);
 
   // 링크 클릭 시 새로운 페이지 로드 처리
   a.addEventListener("click", (e) => {
@@ -71,17 +60,45 @@ async function addDoc(doc) {
     history.pushState({ page: id }, "", `/documents/${id}`);
     loadTextEditor(id);
   });
+
+  if (doc.documents.length !== 0 && depth < 3) {
+    const childList = document.createElement("ul");
+    doc.documents.forEach((childDoc) =>
+      childList.appendChild(makeItem(childDoc, depth + 1))
+    );
+    li.appendChild(childList);
+  }
+  return li;
+}
+
+async function addDoc(doc) {
+  sidebarItems.appendChild(makeItem(doc));
 }
 
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
 function loadTextEditor(id) {
-  const content = id
-    ? `
-     <div class="text-block" contenteditable="true">
-        <h1>새 페이지</h1>
-     </div>
+  const content =
+    id === "Content"
+      ? `<div class="intro">어서오세요</div>`
+      : id
+      ? `
+    <div class="editor-top">
+    <div class="editor-dir">root1 </div>
+  </div>
+  <div class="editor-content">
+    <h2 id="title-display"></h2>
+    <div class="title-container">
+      <textarea
+        id="title-input"
+        class="title-input"
+        placeholder="제목"
+      ></textarea>
+    </div>
+    <div id="output"></div>
+    <div class="text-block" contenteditable="true"></div>
+  </div>
   `
-    : "<h1>페이지를 찾을 수 없습니다.</h1>";
+      : "<h1>페이지를 찾을 수 없습니다.</h1>";
   editor.innerHTML = content;
 }
 
@@ -93,31 +110,26 @@ window.addEventListener("popstate", function (event) {
 
 // 부모 문서 추가 (문서 추가 시 사이드바에 표시)
 addDocBtn.addEventListener("click", async () => {
-  const data = await handleCreateDoc(
-    JSON.stringify({ title: "새 페이지", parent: null })
-  );
+  await handleCreateDoc(JSON.stringify({ title: "새 페이지", parent: null }));
   loadSidebarDocs(); // 모든 문서 다시 로드
 });
 
 // 페이지 로드 시 문서들을 가져오는 코드
-window.onload = loadSidebarDocs();
+window.onload = async function () {
+  await loadSidebarDocs();
+};
 
+// 하위 문서 추가 ( li,button 태그가 동적으로 생성되서 이벤트 할당이 안되는 issue) 및 문서 삭제
 sidebarItems.addEventListener("click", async (e) => {
-  const subDocItems = e.currentTarget.firstElementChild.lastElementChild;
   const parentId =
     e.target.parentElement.parentElement.firstElementChild.dataset.url;
 
-  // 하위 문서 추가
   if (e.target.classList.contains("sidebar-item-add")) {
-    const data = await handleCreateDoc(
+    await handleCreateDoc(
       JSON.stringify({ title: "하위 페이지", parent: parentId })
     );
-
-    loadSidebarDocs(); // 모든 문서 다시 로드
-
-    //  문서 삭제
   } else if (e.target.classList.contains("sidebar-item-remove")) {
-    const data = await handleDeleteDoc(parentId);
-    loadSidebarDocs(); // 모든 문서 다시 로드
+    await handleDeleteDoc(parentId);
   }
+  loadSidebarDocs(); // 모든 문서 다시 로드
 });
