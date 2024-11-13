@@ -1,0 +1,41 @@
+textarea.title-input {
+  /*
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    width: 300px;
+    height: 150px;
+    background: transparent;
+    border: none;
+    color: transparent;
+    padding: 0;
+    pointer-events: auto;
+    visibility: hidden;
+    */
+
+  width: 100%;
+  border: none;
+  outline: 0;
+  resize: none;
+  background: transparent;
+  color: #525252;
+  font-size: 25px;
+  /*padding-top: 25px;*/
+}
+textarea.title-input::placeholder {
+  color: #525252;
+  font-weight: bold;
+}
+.title-display {
+  width: 100%;
+  font-weight: bold;
+  /*margin-top: 20px;*/
+}
+.hr {
+  border: "none";
+  height: "2px";
+  background-color: "#000";
+  margin: "20px 0";
+  width: "100%";
+  cursor: "text";
+}
