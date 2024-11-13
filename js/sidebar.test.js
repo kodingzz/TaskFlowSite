@@ -10,13 +10,12 @@ import {
 import { loadEditorScript } from "./utils.js";
 
 const EDITOR_TEMP = ` <div class="editor-content">
-<h2 id="title-display"></h2>
 <div class="title-container">
-  <textarea
+  <input
     id="title-input"
     class="title-input"
     placeholder="제목"
-  ></textarea>
+  ></input>
 </div>
 <div class="text-block" contenteditable="true"></div>
 </div>`;

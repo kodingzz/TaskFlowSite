@@ -40,40 +40,22 @@
   padding-left: 20px; /* 번호와 텍스트 간 간격 */
 }
 
-textarea.title-input {
-  /*
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-    width: 300px;
-    height: 150px;
-    background: transparent;
-    border: none;
-    color: transparent;
-    padding: 0;
-    pointer-events: auto;
-    visibility: hidden;
-    */
-
+input.title-input {
   width: 100%;
   border: none;
   outline: 0;
   resize: none;
   background: transparent;
-  color: #525252;
+  color: white;
+  font-weight: bold;
   font-size: 25px;
-  /*padding-top: 25px;*/
+  margin-bottom: 8px;
 }
-textarea.title-input::placeholder {
+input.title-input::placeholder {
   color: #525252;
   font-weight: bold;
 }
-.title-display {
-  width: 100%;
-  font-weight: bold;
-  color: #ccc;
-  margin-bottom: 20px;
-}
+
 .hr {
   border: "none";
   height: "2px";
