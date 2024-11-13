@@ -10,16 +10,40 @@ import {
 import { loadEditorScript } from "./utils.js";
 
 const EDITOR_TEMP = ` <div class="editor-content">
-<h2 id="title-display"></h2>
 <div class="title-container">
-  <textarea
+  <input
     id="title-input"
     class="title-input"
     placeholder="제목"
-  ></textarea>
+  ></input>
 </div>
+<div id="text-container">
 <div class="text-block" contenteditable="true"></div>
-</div>`;
+</div>
+</div>
+`;
+
+//사이드바 닫힘 & 펼침
+// hidden 토글
+document.getElementById("toggleSidebar").addEventListener("click", () => {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.add("hidden"); // 사이드바 접기/펼치기
+  localStorage.setItem("isMenuClose", true);
+  makeOpenSidebarBtn();
+});
+function makeOpenSidebarBtn() {
+  const editorTop = document.querySelector(".editor-top");
+  const openBtn = document.createElement("button");
+  openBtn.classList.add("sidebar-btn");
+  openBtn.classList.add("openBtn");
+  openBtn.id = "sidebarOpenBtn";
+  openBtn.addEventListener("click", function () {
+    sidebar.classList.remove("hidden");
+    localStorage.setItem("isMenuClose", false);
+    this.remove();
+  });
+  editorTop.prepend(openBtn);
+}
 
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
@@ -137,8 +161,6 @@ async function loadTextEditor(id) {
     dirContent += `<span>/</span><a href="/documents/${item.id}" data-url="${item.id}">${item.title}</a>`;
   });
 
-  console.log(dirContent);
-
   const content =
     id === "Content"
       ? `
@@ -171,6 +193,9 @@ async function loadTextEditor(id) {
     }
   });
   loadEditorScript();
+  const isMenuClose = localStorage.getItem("isMenuClose");
+  console.log("isMenuClose", isMenuClose);
+  if (isMenuClose === "true") makeOpenSidebarBtn();
 }
 
 // 뒤로 가기/앞으로 가기 시 페이지 로드 처리
