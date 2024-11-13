@@ -10,26 +10,28 @@ import {
 import { loadEditorScript } from "./utils.js";
 
 const EDITOR_TEMP = ` <div class="editor-content">
-<h2 id="title-display"></h2>
-<div class="title-container">
-  <textarea
+  <input
     id="title-input"
     class="title-input"
     placeholder="제목"
-  ></textarea>
-</div>
+  />
+<div id="text-container">
 <div class="text-block" contenteditable="true"></div>
-</div>`;
+</div>
+</div>
+`;
 
 //사이드바 닫힘 & 펼침
 // hidden 토글
 document.getElementById("toggleSidebar").addEventListener("click", () => {
-  const sidebar = document.getElementById("sidebar");
-  sidebar.classList.add("hidden"); // 사이드바 접기/펼치기
+  handleMenuClose();
   localStorage.setItem("isMenuClose", true);
   makeOpenSidebarBtn();
 });
-
+function handleMenuClose() {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.add("hidden");
+}
 function makeOpenSidebarBtn() {
   const editorTop = document.querySelector(".editor-top");
   const openBtn = document.createElement("button");
@@ -105,7 +107,7 @@ function makeItem(doc, depth = 1) {
     e.preventDefault();
     const id = e.currentTarget.dataset.url;
     history.pushState({ page: id }, "", `/documents/${id}`);
-    // loadTextEditor(id);
+    loadTextEditor(id);
   });
 
   if (doc.documents.length !== 0 && depth < 3) {
@@ -193,8 +195,10 @@ async function loadTextEditor(id) {
   });
   loadEditorScript();
   const isMenuClose = localStorage.getItem("isMenuClose");
-  console.log("isMenuClose", isMenuClose);
-  if (isMenuClose === "true") makeOpenSidebarBtn();
+  if (isMenuClose === "true") {
+    makeOpenSidebarBtn();
+    handleMenuClose();
+  }
 }
 
 // 뒤로 가기/앞으로 가기 시 페이지 로드 처리
@@ -239,9 +243,10 @@ sidebarItems.addEventListener("click", async (e) => {
       await handleCreateDoc(
         JSON.stringify({ title: "하위 페이지", parent: parentId })
       );
+      loadSidebarDocs(); // 모든 문서 다시 로드
     } else if (e.target.classList.contains("sidebar-item-remove")) {
       await handleDeleteDoc(parentId);
+      loadSidebarDocs(); // 모든 문서 다시 로드
     }
-    loadSidebarDocs(); // 모든 문서 다시 로드
   }
 });

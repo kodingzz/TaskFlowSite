@@ -1,12 +1,14 @@
 .editor-content {
-  width: 1108px;
+  width: 100%;
+  max-width: 1108px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .text-block {
-  width: 1008px;
+  width: 100%;
+  max-width: 1008px;
   margin-top: 4px;
   margin-bottom: 4px;
 }
