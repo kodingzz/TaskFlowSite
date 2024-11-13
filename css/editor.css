@@ -1,0 +1,27 @@
+textarea.title-input {
+  /*
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  width: 300px;
+  height: 150px;
+  background: transparent;
+  border: none;
+  color: transparent;
+  padding: 0;
+  pointer-events: auto;
+  visibility: hidden;
+  */
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #525252;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+textarea.title-input::placeholder {
+  color: #525252;
+  font-weight: bold;
+  font-size: 18px;
+}
