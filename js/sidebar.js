@@ -25,12 +25,13 @@ const EDITOR_TEMP = ` <div class="editor-content">
 // hidden 토글
 document.getElementById("toggleSidebar").addEventListener("click", () => {
   handleMenuClose();
-  localStorage.setItem("isMenuClose", true);
   makeOpenSidebarBtn();
 });
+
 function handleMenuClose() {
   const sidebar = document.getElementById("sidebar");
   sidebar.classList.add("hidden");
+  localStorage.setItem("isMenuClose", true);
 }
 function makeOpenSidebarBtn() {
   const editorTop = document.querySelector(".editor-top");
