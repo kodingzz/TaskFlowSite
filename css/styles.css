@@ -49,6 +49,17 @@
   width: 100%;
   height: 100%;
 }
+.sidebar-search img {
+  width: 14px;
+  height: 14px;
+  object-fit: cover;
+}
+.sidebar-sub {
+  font-size: 14px;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid;
+  color: var(--main-light-gray);
+}
 .sidebar-nav {
   width: 100%;
   flex-grow: 1;
