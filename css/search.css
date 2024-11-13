@@ -68,9 +68,12 @@
   border: 8px solid #181818;
   border-radius: 12px;
   background-color: #181818;
+  color: #ffffff;
+  text-align: center;
 }
 
 .modal-content {
+  display: block;
   text-align: left;
   padding: 15px 8px;
   border: 3px solid #181818;
