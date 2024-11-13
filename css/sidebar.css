@@ -42,7 +42,9 @@
 .sidebar-item-remove {
   position: relative;
 }
-
+.sidebar-item-toggle {
+  position: relative;
+}
 .sidebar-item-add::after,
 .sidebar-item-remove::after {
   content: "";
