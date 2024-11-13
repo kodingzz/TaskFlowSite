@@ -6,39 +6,38 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
   const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
   const titleInput = document.getElementById("title-input");
   console.log(titleInput);
+
   // Enter 키가 눌렸을 때
   if (e.key === "Enter") {
     e.preventDefault(); // 기본 Enter 동작을 막음
 
-    // 현재 포커스가 Text input일때
-    if (currentBlock === titleInput) createNewFirstBlock();
+    // 현재 포커스가 Text input일 때
+    if (currentBlock === titleInput) {
+      createNewFirstBlock();
+    }
 
     // 현재 블록이 text-block일 경우, 새 블록을 생성
     if (currentBlock.classList.contains("text-block")) {
       createNewBlock(currentBlock);
     }
-
-    // 리스트 블록일 경우 li를 계속함
-    if (currentBlock.tagName === "LI") {
-      const parentEl = currentBlock.parentElement;
-      continueLiBlock(parentEl);
-    }
   }
 
-  // Delete/Backspace 키 처리
-  if (e.key === "Delete" || e.key === "Backspace") {
+  // 현재 블록 빈 블록일 때 Delete/Backspace 처리
+  if (
+    (e.key === "Delete" || e.key === "Backspace") &&
+    currentBlock.textContent.trim() === ""
+  ) {
     const previousBlock = currentBlock.previousElementSibling;
 
-    if (!previousBlock.classList.contains("text-block")) {
+    // 1. 첫 번째 텍스트 블록일 때
+    if (!previousBlock || !previousBlock.classList.contains("text-block")) {
       e.preventDefault();
       currentBlock.focus();
       setCaretToEnd(currentBlock);
     }
 
-    if (
-      currentBlock.tagName === "DIV" &&
-      currentBlock.textContent.trim() === ""
-    ) {
+    // 2. 현재 블록이 기본 블록일 때
+    if (currentBlock.tagName === "DIV") {
       if (isPreviousBlockList(previousBlock)) {
         e.preventDefault(); // 기본 동작 방지
         currentBlock.remove(); // 현재 빈 div 블록 삭제
