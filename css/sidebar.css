@@ -23,11 +23,13 @@
 }
 
 .sidebar-item ul {
-  padding-left: 24px;
+  padding-left: 1rem;
   transition: all 0.2;
+  z-index: 1;
+  overflow: hidden;
 }
 .sidebar-item > ul .sidebar-item > ul {
-  padding-left: 60px;
+  padding-left: 40px;
 }
 .sidebar-item.close > ul {
   height: 1px;
@@ -39,12 +41,13 @@
 .sidebar-item a {
   display: flex;
   max-width: 100%;
+  height: 24px;
   align-items: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding: 0.5rem;
-  border-radius: 8px;
+  padding: 4px;
+  border-radius: 4px;
   transition: all 0.2s;
 }
 .sidebar-item a:hover {
