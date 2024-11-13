@@ -2,71 +2,93 @@ let titleInput = document.getElementById("title-input");
 
 titleInput.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
-    const newTitle = titleInput.value.trim();
-    if (newTitle) {
-      return newTitle;
-    }
+    document.querySelectorAll(".text-block")[0].focus();
   }
 });
 
 // 텍스트 에디터
 
+// 이전 블록이 ul 또는 ol인지 확인하는 함수
+function isPreviousBlockList(block) {
+  return block && (block.tagName === "UL" || block.tagName === "OL");
+}
+
 // default 텍스트 블록에 대한 키보드 입력 처리
 // Enter 키를 누를 때 동작
-document.querySelector("#editor").addEventListener("keydown", function (e) {
-  const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
+document
+  .querySelector("#text-container")
+  .addEventListener("keydown", function (e) {
+    const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
 
-  // Enter 키가 눌렸을 때
-  if (e.key === "Enter") {
-    e.preventDefault(); // 기본 Enter 동작을 막음
+    // Enter 키가 눌렸을 때
+    if (e.key === "Enter") {
+      e.preventDefault(); // 기본 Enter 동작을 막음
 
-    // 현재 블록이 text-block일 경우, 새 블록을 생성
-    if (currentBlock.classList.contains("text-block")) {
-      createNewBlock(currentBlock);
+      // 현재 블록이 text-block일 경우, 새 블록을 생성
+      if (currentBlock.classList.contains("text-block")) {
+        createNewBlock(currentBlock);
+      }
+
+      // 리스트 블록일 경우 li를 계속함
+      if (currentBlock.tagName === "LI") {
+        const parentEl = currentBlock.parentElement;
+        continueLiBlock(parentEl);
+      }
     }
 
-    // 리스트 블록일 경우 li를 계속함
-    if (currentBlock.tagName === "LI") {
-      const parentEl = currentBlock.parentElement;
-      continueLiBlock(parentEl);
-    }
-  }
-
-  // Handle Delete/Backspace keys
-  if (e.key === "Delete" || e.key === "Backspace") {
-    // 1. 기본 div 블록이 비어있고 삭제되었을 때, 이전 블록으로 이동.
-    if (
-      currentBlock.tagName === "DIV" &&
-      currentBlock.textContent.trim() === "" &&
-      currentBlock.previousElementSibling
-    ) {
+    // Delete/Backspace 키 처리
+    if (e.key === "Delete" || e.key === "Backspace") {
       const previousBlock = currentBlock.previousElementSibling;
-      currentBlock.remove(); // 현재 빈 div 블록 삭제
-      previousBlock.focus(); // 이전 블록으로 포커스 이동
-      setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
+
+      if (
+        currentBlock.tagName === "DIV" &&
+        currentBlock.textContent.trim() === ""
+      ) {
+        if (!previousBlock.classList.contains("text-block")) {
+          e.preventDefault();
+          currentBlock.focus();
+          setCaretToEnd(currentBlock);
+        }
+        if (isPreviousBlockList(previousBlock)) {
+          e.preventDefault(); // 기본 동작 방지
+          currentBlock.remove(); // 현재 빈 div 블록 삭제
+
+          // 이전 ul/ol의 마지막 자식 요소를 찾고 포커스 이동
+          const lastChild = previousBlock.lastElementChild;
+          if (lastChild) {
+            lastChild.focus(); // 마지막 li에 포커스 이동
+            setCaretToEnd(lastChild); // 마지막 글자 뒤로 커서 이동
+          }
+        } else {
+          e.preventDefault(); // 기본 동작 방지
+          currentBlock.remove(); // 현재 빈 div 블록 삭제
+          if (previousBlock) {
+            previousBlock.focus(); // 이전 블록으로 포커스 이동
+            setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
+          }
+        }
+      }
+
+      // ul/ol 블록 내의 li가 비어있고 삭제된 경우 처리
+      if (
+        currentBlock.tagName === "LI" &&
+        currentBlock.textContent.trim() === ""
+      ) {
+        const parentEl =
+          currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
+        deleteListItem(parentEl);
+      }
     }
 
-    // 2. li 블록이 비어있고 삭제되었을 때, 기본 블록으로 바뀌는 처리
-    if (
-      currentBlock.tagName === "LI" &&
-      currentBlock.textContent.trim() === ""
-    ) {
-      const parentEl =
-        currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
-      deleteListItem(parentEl);
-      setCaretToEnd(currentBlock.previousElementSibling.lastChild);
+    // 키 업/다운 이동 처리
+    if (e.key === "ArrowUp" && currentBlock.previousElementSibling) {
+      currentBlock.previousElementSibling.focus();
     }
-  }
 
-  // 키 업/다운 이동 처리
-  if (e.key === "ArrowUp" && currentBlock.previousElementSibling) {
-    currentBlock.previousElementSibling.focus();
-  }
-
-  if (e.key === "ArrowDown" && currentBlock.nextElementSibling) {
-    currentBlock.nextElementSibling.focus();
-  }
-});
+    if (e.key === "ArrowDown" && currentBlock.nextElementSibling) {
+      currentBlock.nextElementSibling.focus();
+    }
+  });
 
 // 커서를 마지막에 위치시키는 함수
 function setCaretToEnd(element) {
@@ -226,3 +248,5 @@ function deleteListItem(parentEl) {
 
   newTextBlock.focus(); // 새로 생성된 div 블록에 포커스 이동
 }
+
+// focus 애러 fixed
