@@ -177,6 +177,8 @@ document.getElementById("editor").addEventListener("input", function (e) {
       createBoldText(currentBlock); // Bold 처리
     } else if (textContent.startsWith("*") && textContent.endsWith("*")) {
       createItalicText(currentBlock); // Italic 처리
+    } else if (/^-{3,}$/.test(textContent.trim())) {
+      createDivider(currentBlock); // --- 또는 --- 등 구분선
     }
   }
 });
@@ -201,6 +203,15 @@ function createBlockquote(block) {
   block.replaceWith(blockquote);
   blockquote.contentEditable = "true";
   blockquote.focus();
+}
+
+function createDivider(block) {
+  const divider = document.createElement("divider");
+  divider.classList.add("divider");
+
+  block.replaceWith(divider);
+  divider.contentEditable = "true";
+  divider.focus();
 }
 
 function createListItem(block) {
