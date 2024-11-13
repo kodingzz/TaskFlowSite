@@ -1,20 +1,16 @@
 // 타이틀 에디터
-
-const titleDisplay = document.querySelector("#title-display");
-const titleInput = document.querySelector("#title-input");
-//const contentInput = document.querySelector("#content-input");
-
+const titleDisplay = document.getElementById("title-display");
+const titleInput = document.getElementById("title-input");
 function saveTitle() {
   const title = titleInput.value.trim();
   if (title) {
     titleDisplay.textContent = title;
-    titleInput.style.display = "none";
+    titleInput.style.visibility = "hidden";
     titleDisplay.style.display = "block";
   }
 }
-
 function editTitle() {
-  titleInput.style.display = "block";
+  titleInput.style.visibility = "visible";
   titleDisplay.style.display = "none";
   titleInput.value = titleDisplay.textContent.trim();
 }
@@ -24,7 +20,6 @@ titleInput.addEventListener("keydown", function (e) {
     saveTitle();
   }
 });
-
 titleDisplay.addEventListener("click", function () {
   editTitle();
 });
@@ -239,4 +234,5 @@ function createNewOlItem(block) {
   newListItem.contentEditable = "true";
   newListItem.focus();
 }
+
 //
