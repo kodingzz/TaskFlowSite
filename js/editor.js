@@ -17,9 +17,15 @@ function editTitle() {
 }
 
 titleInput.addEventListener("keydown", function (e) {
+<<<<<<< HEAD
   if (e.key === "Enter") {
     e.preventDefault(); // Enter 키로 줄 바꿈 방지
     saveTitle(); // 제목 저장
+=======
+  if (e.key === "Enter" || "Tab") {
+    e.preventDefault();
+    saveTitle();
+>>>>>>> 1b821a3e9bd781e23e62bde4ded4a1d57148d6db
   }
 });
 
@@ -165,8 +171,8 @@ document.querySelector("#editor").addEventListener("input", function (e) {
         // '# ' -> h1
         convertToHeaderBlock(currentBlock, "h3", 2);
       } else if (/^\d+\./.test(textContent.trim())) {
-        // Ordered list 처리
-        createNewUlItem(currentBlock);
+        // Ordered list 처리 (숫자 목록 처리)
+        createNewOlItem(currentBlock); // createNewOlItem로 변경
       } else if (
         textContent.startsWith("*") ||
         textContent.startsWith("-") ||
