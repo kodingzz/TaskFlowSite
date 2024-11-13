@@ -112,6 +112,9 @@ section#editor {
   max-height: 100vh;
   overflow-y: auto;
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .intro {
