@@ -22,6 +22,8 @@ async function loadSidebarDocs() {
 
   // 문서를 순회하며 사이드바에 추가
   documents.forEach((doc) => {
+    console.log(doc);
+
     addDoc(doc);
   });
 }
@@ -50,6 +52,8 @@ async function addDoc(doc) {
   btnRemove.classList.add("sidebar-item-remove");
   btnRemove.textContent = "-";
 
+  const subDocItems = document.createElement("ul");
+
   divBtns.appendChild(btnAdd);
   divBtns.appendChild(btnRemove);
 
@@ -57,6 +61,7 @@ async function addDoc(doc) {
   divContent.appendChild(divBtns);
 
   li.appendChild(divContent);
+  li.appendChild(subDocItems);
   sidebarItems.appendChild(li);
 
   // 링크 클릭 시 새로운 페이지 로드 처리
@@ -95,25 +100,22 @@ addDocBtn.addEventListener("click", async () => {
 });
 
 // 페이지 로드 시 문서들을 가져오는 코드
-window.onload = async function () {
-  const documents = await handleGetAllDocs();
+window.onload = loadSidebarDocs();
 
-  // 문서 데이터 가져오기 및 사이드바에 추가
-  documents.forEach((doc) => {
-    addDoc(doc);
-  });
-};
-
-// 하위 문서 추가 ( li,button 태그가 동적으로 생성되서 이벤트 할당이 안되는 issue) 및 문서 삭제
 sidebarItems.addEventListener("click", async (e) => {
+  const subDocItems = e.currentTarget.firstElementChild.lastElementChild;
   const parentId =
     e.target.parentElement.parentElement.firstElementChild.dataset.url;
 
+  // 하위 문서 추가
   if (e.target.classList.contains("sidebar-item-add")) {
     const data = await handleCreateDoc(
       JSON.stringify({ title: "하위 페이지", parent: parentId })
     );
+
     loadSidebarDocs(); // 모든 문서 다시 로드
+
+    //  문서 삭제
   } else if (e.target.classList.contains("sidebar-item-remove")) {
     const data = await handleDeleteDoc(parentId);
     loadSidebarDocs(); // 모든 문서 다시 로드

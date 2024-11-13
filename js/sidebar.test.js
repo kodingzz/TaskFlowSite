@@ -20,8 +20,7 @@ async function loadSidebarDocs() {
   });
 }
 
-function makeItem(doc) {
-  console.log(doc);
+function makeItem(doc, depth = 1) {
   const li = document.createElement("li");
   li.classList.add("sidebar-item");
 
@@ -44,13 +43,16 @@ function makeItem(doc) {
   btnRemove.classList.add("sidebar-item-remove");
   btnRemove.textContent = "-";
 
-  divBtns.appendChild(btnAdd);
+  if (depth < 3) {
+    divBtns.appendChild(btnAdd);
+  }
   divBtns.appendChild(btnRemove);
 
   divContent.appendChild(a);
   divContent.appendChild(divBtns);
 
   li.appendChild(divContent);
+
   // 링크 클릭 시 새로운 페이지 로드 처리
   a.addEventListener("click", (e) => {
     e.preventDefault();
@@ -58,10 +60,11 @@ function makeItem(doc) {
     history.pushState({ page: id }, "", `/documents/${id}`);
     loadTextEditor(id);
   });
-  if (doc.documents.length !== 0) {
+
+  if (doc.documents.length !== 0 && depth < 3) {
     const childList = document.createElement("ul");
     doc.documents.forEach((childDoc) =>
-      childList.appendChild(makeItem(childDoc))
+      childList.appendChild(makeItem(childDoc, depth + 1))
     );
     li.appendChild(childList);
   }
