@@ -14,6 +14,11 @@
   background-color: var(--main-gray);
 }
 
+.sidebar-search img {
+  width: 12px;
+  height: 12px;
+}
+
 .sidebar-search:hover {
   background-color: var(--main-light-gray);
 }
