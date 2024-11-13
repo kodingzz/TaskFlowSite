@@ -17,8 +17,11 @@ const EDITOR_TEMP = ` <div class="editor-content">
     placeholder="제목"
   ></input>
 </div>
+<div id="text-container">
 <div class="text-block" contenteditable="true"></div>
-</div>`;
+</div>
+</div>
+`;
 
 //사이드바 닫힘 & 펼침
 // hidden 토글
