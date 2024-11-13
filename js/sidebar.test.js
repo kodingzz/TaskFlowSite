@@ -127,10 +127,16 @@ function findParentDoc(childId, docs) {
 }
 
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
-function loadTextEditor(id) {
-  console.log(id);
-  let dirContent = '<a href="/">Home</a>'; // <span>/</span><a href="/documents/139943">새 페이지</a>
-  // if (id) findDocID(docList, id);
+async function loadTextEditor(id) {
+  let dirContent = '<a href="/">Home</a>';
+  let paths = [];
+  if (id) {
+    paths = await pathfromRoot(id, docList);
+  }
+  paths.forEach((item) => {
+    dirContent += `<span>/</span><a href="/documents/${item.id}" data-url="${item.id}">${item.title}</a>`;
+  });
+
   const content =
     id === "Content"
       ? `
@@ -152,6 +158,7 @@ function loadTextEditor(id) {
     e.preventDefault();
     const id = e.target.dataset.url;
     history.pushState({ page: id }, "", `/documents/${id}`);
+    loadTextEditor(id);
   });
   loadEditorScript();
 }
