@@ -4,19 +4,17 @@ import {
   handleCreateDoc,
   handleDeleteDoc,
   handleGetAllDocs,
-  handleGetDocById,
 } from "./client.js";
 
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
 
-let docList = [];
-
 async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
-  docList = documents;
+  console.log(documents);
+
   documents.forEach((doc) => {
     addDoc(doc);
   });
@@ -45,6 +43,7 @@ function makeItem(doc, depth = 1) {
   btnRemove.classList.add("sidebar-item-remove");
   btnRemove.textContent = "-";
 
+  // depth가 3이상이면 추가버튼 x
   if (depth < 3) {
     divBtns.appendChild(btnAdd);
   }
@@ -77,36 +76,15 @@ async function addDoc(doc) {
   sidebarItems.appendChild(makeItem(doc));
 }
 
-function findDocID(list, id) {
-  for (const doc of list) {
-    if (doc.id === id) {
-      console.log(doc);
-    }
-    if (doc.documents.length > 0) {
-      const result = findDocID(doc.documents, id);
-      if (result) {
-        console.log(result);
-      }
-    }
-  }
-}
-
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
 function loadTextEditor(id) {
-  console.log(id);
-  let dirContent = '<a href="/">Home</a>';
-  if (id) findDocID(docList, id);
   const content =
     id === "Content"
-      ? `
-      <div class="editor-top">
-      <div class="editor-dir">${dirContent}</div>
-    </div>
-      <div class="intro">어서오세요</div>`
+      ? `<div class="intro">어서오세요</div>`
       : id
       ? `
     <div class="editor-top">
-    <div class="editor-dir">${dirContent}</div>
+    <div class="editor-dir">root1 </div>
   </div>
   <div class="editor-content">
     <h2 id="title-display"></h2>
