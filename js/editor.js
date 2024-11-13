@@ -255,4 +255,4 @@ function deleteListItem(parentEl) {
   newTextBlock.focus(); // 새로 생성된 div 블록에 포커스 이동
 }
 
-// focus 애러 fixed
+// delete error fix
