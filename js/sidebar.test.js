@@ -7,6 +7,18 @@ import {
   handleGetDocById,
 } from "./client.js";
 
+const EDITOR_TEMP = ` <div class="editor-content">
+<h2 id="title-display"></h2>
+<div class="title-container">
+  <textarea
+    id="title-input"
+    class="title-input"
+    placeholder="제목"
+  ></textarea>
+</div>
+<div class="text-block" contenteditable="true"></div>
+</div>`;
+
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
@@ -111,18 +123,7 @@ function loadTextEditor(id) {
     <div class="editor-top">
     <div class="editor-dir">${dirContent}</div>
   </div>
-  <div class="editor-content">
-    <h2 id="title-display"></h2>
-    <div class="title-container">
-      <textarea
-        id="title-input"
-        class="title-input"
-        placeholder="제목"
-      ></textarea>
-    </div>
-    <div id="output"></div>
-    <div class="text-block" contenteditable="true"></div>
-  </div>
+ ${EDITOR_TEMP}
   `
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   editor.innerHTML = content;
