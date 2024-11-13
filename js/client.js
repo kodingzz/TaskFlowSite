@@ -7,6 +7,7 @@ const handleFetch = async (endPoint = "", options) => {
     headers: {
       Accept: "*/*",
       "x-username": USER_NAME,
+      "Content-Type": "application/json",
     },
     ...options,
   };
