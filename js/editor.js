@@ -1,10 +1,3 @@
-// titleInput.addEventListener("keydown", function (event) {
-//   if (event.key === "Enter") {
-//     console.log(document.querySelectorAll(".text-block")[0]);
-//     createNewBlock(document.querySelectorAll(".text-block")[0]);
-//   }
-// });
-
 // 텍스트 에디터
 
 // default 텍스트 블록에 대한 키보드 입력 처리
@@ -12,7 +5,7 @@
 document.querySelector("#editor").addEventListener("keydown", function (e) {
   const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
   const titleInput = document.getElementById("title-input");
-
+  console.log(titleInput);
   // Enter 키가 눌렸을 때
   if (e.key === "Enter") {
     e.preventDefault(); // 기본 Enter 동작을 막음
@@ -36,15 +29,16 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
   if (e.key === "Delete" || e.key === "Backspace") {
     const previousBlock = currentBlock.previousElementSibling;
 
+    if (!previousBlock.classList.contains("text-block")) {
+      e.preventDefault();
+      currentBlock.focus();
+      setCaretToEnd(currentBlock);
+    }
+
     if (
       currentBlock.tagName === "DIV" &&
       currentBlock.textContent.trim() === ""
     ) {
-      if (!previousBlock.classList.contains("text-block")) {
-        e.preventDefault();
-        currentBlock.focus();
-        setCaretToEnd(currentBlock);
-      }
       if (isPreviousBlockList(previousBlock)) {
         e.preventDefault(); // 기본 동작 방지
         currentBlock.remove(); // 현재 빈 div 블록 삭제
@@ -65,7 +59,7 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
       }
     }
 
-    // ul/ol 블록 내의 li가 비어있고 삭제된 경우 처리
+    // ul/ol 내 li 삭제
     if (
       currentBlock.tagName === "LI" &&
       currentBlock.textContent.trim() === ""
@@ -99,6 +93,7 @@ function setCaretToEnd(element) {
 // 텍스트 입력 처리시 반응하는 이벤트 리스너
 document.querySelector("#editor").addEventListener("input", function (e) {
   const currentBlock = document.activeElement;
+  console.log(e.data);
 
   // 텍스트 블록 내에서만 처리
   if (currentBlock && currentBlock.classList.contains("text-block")) {
@@ -139,6 +134,7 @@ function createNewFirstBlock() {
   document.getElementById("text-container").prepend(newTextBlock);
   newTextBlock.focus();
 }
+
 // 새로운 텍스트 블록 생성 함수
 function createNewBlock(currentBlock) {
   const newTextBlock = document.createElement("div");
@@ -227,7 +223,12 @@ function deleteListItem(parentEl) {
   // 만약 부모 리스트 안에 li가 더 이상 없다면 부모 리스트 삭제
   if (parentList.querySelectorAll("li").length === 0) {
     const previousBlock = parentList.previousElementSibling; // 부모 리스트의 이전 형제 요소 찾기
+
     parentList.remove(); // 부모 리스트 삭제
+    if (previousBlock) {
+      previousBlock.focus(); // 이전 블록으로 포커스 이동
+      setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
+    }
 
     // 새로 생성된 div를 부모 리스트의 형제 요소로 추가
     if (nextSibling) {
@@ -252,3 +253,5 @@ function deleteListItem(parentEl) {
 
   newTextBlock.focus(); // 새로 생성된 div 블록에 포커스 이동
 }
+
+// delete error fix
