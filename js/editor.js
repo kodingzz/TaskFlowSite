@@ -2,8 +2,10 @@ let titleInput = document.getElementById("title-input");
 
 titleInput.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
-    document.querySelectorAll(".text-block")[0];
-    document.querySelectorAll(".text-block")[0]?.focus();
+    const newTitle = titleInput.value.trim();
+    if (newTitle) {
+      return newTitle;
+    }
   }
 });
 
