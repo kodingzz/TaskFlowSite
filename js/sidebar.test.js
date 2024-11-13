@@ -29,6 +29,9 @@ function makeItem(doc, depth = 1) {
   const divContent = document.createElement("div");
   divContent.classList.add("sidebar-item-content");
 
+  const btnToggle = document.createElement("button");
+  btnToggle.classList.add("sidebar-item-toggle");
+
   const a = document.createElement("a");
   a.href = `/documents/${doc.id}`;
   a.dataset.url = doc.id;
