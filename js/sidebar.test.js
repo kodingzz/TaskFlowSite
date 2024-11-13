@@ -7,13 +7,39 @@ import {
   handleGetDocById,
 } from "./client.js";
 
+import { loadEditorScript } from "./utils.js";
+
+//사이드바 닫힘 & 펼침
+// hidden 토글
+document.getElementById("toggleSidebar").addEventListener("click", () => {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.add("hidden"); // 사이드바 접기/펼치기
+  localStorage.setItem("isMenuClose", true);
+  makeOpenSidebarBtn();
+});
+function makeOpenSidebarBtn() {
+  const editorTop = document.querySelector(".editor-top");
+  const openBtn = document.createElement("button");
+  openBtn.classList.add("sidebar-btn");
+  openBtn.classList.add("openBtn");
+  openBtn.id = "sidebarOpenBtn";
+  openBtn.addEventListener("click", function () {
+    sidebar.classList.remove("hidden");
+    localStorage.setItem("isMenuClose", false);
+    this.remove();
+  });
+  editorTop.prepend(openBtn);
+}
+
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
 
+let docList = [];
 async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
+  docList = documents;
 
   documents.forEach((doc) => {
     addDoc(doc);
@@ -23,9 +49,15 @@ async function loadSidebarDocs() {
 function makeItem(doc, depth = 1) {
   const li = document.createElement("li");
   li.classList.add("sidebar-item");
+  const closeArr = localStorage.getItem("closeArr");
+  const convertedCloseArr = closeArr ? JSON.parse(closeArr) : [];
+  if (convertedCloseArr.includes(doc.id.toString())) li.classList.add("close");
 
   const divContent = document.createElement("div");
   divContent.classList.add("sidebar-item-content");
+
+  const btnToggle = document.createElement("button");
+  btnToggle.classList.add("sidebar-item-toggle");
 
   const a = document.createElement("a");
   a.href = `/documents/${doc.id}`;
@@ -43,7 +75,9 @@ function makeItem(doc, depth = 1) {
   btnRemove.classList.add("sidebar-item-remove");
   btnRemove.textContent = "-";
 
+  // depth가 3이상이면 추가버튼 x
   if (depth < 3) {
+    divContent.prepend(btnToggle);
     divBtns.appendChild(btnAdd);
   }
   divBtns.appendChild(btnRemove);
@@ -75,33 +109,6 @@ async function addDoc(doc) {
   sidebarItems.appendChild(makeItem(doc));
 }
 
-// URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
-function loadTextEditor(id) {
-  const content =
-    id === "Content"
-      ? `<div class="intro">어서오세요</div>`
-      : id
-      ? `
-    <div class="editor-top">
-    <div class="editor-dir">root1 </div>
-  </div>
-  <div class="editor-content">
-    <h2 id="title-display"></h2>
-    <div class="title-container">
-      <textarea
-        id="title-input"
-        class="title-input"
-        placeholder="제목"
-      ></textarea>
-    </div>
-    <div id="output"></div>
-    <div class="text-block" contenteditable="true"></div>
-  </div>
-  `
-      : "<h1>페이지를 찾을 수 없습니다.</h1>";
-  editor.innerHTML = content;
-}
-
 // 뒤로 가기/앞으로 가기 시 페이지 로드 처리
 window.addEventListener("popstate", function (event) {
   const id = event.state?.page || "Content";
@@ -122,14 +129,32 @@ window.onload = async function () {
 // 하위 문서 추가 ( li,button 태그가 동적으로 생성되서 이벤트 할당이 안되는 issue) 및 문서 삭제
 sidebarItems.addEventListener("click", async (e) => {
   const parentId =
-    e.target.parentElement.parentElement.firstElementChild.dataset.url;
+    e.target.parentElement.parentElement.querySelector("a").dataset.url;
 
-  if (e.target.classList.contains("sidebar-item-add")) {
-    await handleCreateDoc(
-      JSON.stringify({ title: "하위 페이지", parent: parentId })
-    );
-  } else if (e.target.classList.contains("sidebar-item-remove")) {
-    await handleDeleteDoc(parentId);
+  if (e.target.classList.contains("sidebar-item-toggle")) {
+    const li = e.target.parentElement.parentElement;
+    li.classList.toggle("close");
+    const closeArr = localStorage.getItem("closeArr");
+    const convertedCloseArr = closeArr ? JSON.parse(closeArr) : [];
+    if (convertedCloseArr.includes(parentId) && !li.classList.contains("close"))
+      localStorage.setItem(
+        "closeArr",
+        JSON.stringify(convertedCloseArr.filter((num) => num !== parentId))
+      );
+    else
+      localStorage.setItem(
+        "closeArr",
+        JSON.stringify([...convertedCloseArr, parentId])
+      );
+  } else {
+    if (e.target.classList.contains("sidebar-item-add")) {
+      await handleCreateDoc(
+        JSON.stringify({ title: "하위 페이지", parent: parentId })
+      );
+      loadSidebarDocs(); // 모든 문서 다시 로드
+    } else if (e.target.classList.contains("sidebar-item-remove")) {
+      await handleDeleteDoc(parentId);
+      loadSidebarDocs(); // 모든 문서 다시 로드
+    }
   }
-  loadSidebarDocs(); // 모든 문서 다시 로드
 });

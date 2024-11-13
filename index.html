@@ -22,55 +22,7 @@
         </div>
         <div class="sidebar-sub">Documents</div>
         <nav class="sidebar-nav">
-          <ul>
-            <!-- <li class="sidebar-item">
-              <div class="sidebar-item-content">
-                <a href="/documents/1" data-url="1">ROOT1</a>
-                <div class="sidebar-item-btns">
-                  <button class="sidebar-item-add">+</button>
-                  <button class="sidebar-item-remove">-</button>
-                </div>
-              </div>
-              <ul>
-                <li class="sidebar-item">
-                  <div class="sidebar-item-content">
-                    <a href="/documents/3" data-url="3">SUB1</a>
-                    <div class="sidebar-item-btns">
-                      <button class="sidebar-item-add">+</button>
-                      <button class="sidebar-item-remove">-</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="sidebar-item">
-                  <div class="sidebar-item-content">
-                    <a href="/documents/4" data-url="4">SUB2</a>
-                    <div class="sidebar-item-btns">
-                      <button class="sidebar-item-add">+</button>
-                      <button class="sidebar-item-remove">-</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="sidebar-item">
-                  <div class="sidebar-item-content">
-                    <a href="/documents/5" data-url="5">SUB3</a>
-                    <div class="sidebar-item-btns">
-                      <button class="sidebar-item-add">+</button>
-                      <button class="sidebar-item-remove">-</button>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <div class="sidebar-item-content">
-                <a href="/documents/2" data-url="2">ROOT2</a>
-                <div class="sidebar-item-btns">
-                  <button class="sidebar-item-add">+</button>
-                  <button class="sidebar-item-remove">-</button>
-                </div>
-              </div>
-            </li> -->
-          </ul>
+          <ul></ul>
         </nav>
         <div class="sidebar-bottom">
           <button id="createDocBtn" type="button" class="sidebar-add">
@@ -79,13 +31,31 @@
         </div>
       </header>
       <section id="editor" contenteditable="false">
+        <div class="editor-top">
+          <div class="editor-dir"><a href="/">Home</a></div>
+        </div>
         <div class="intro">Hello, World!</div>
       </section>
     </main>
+
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="modal-title">
+          <span>검색창</span>
+        </div>
+
+        <form class="modal-search">
+          <input type="text" placeholder="도큐먼트 제목을 입력하세요." />
+          <button type="submit">검색</button>
+        </form>
+
+        <div class="modal-contents"></div>
+      </div>
+    </div>
     <script type="module" src="./js/index.js"></script>
-    <script type="module" src="./js/editor.js"></script>
-    <!-- <script type="module" src="./js/sidebar.js"></script> -->
-    <script type="module" src="./js/sidebar.test.js"></script>
+    <script type="module" src="./js/sidebar.js"></script>
+    <!-- <script type="module" src="./js/sidebar.test.js"></script> -->
     <script type="module" src="./js/editorTopBar.js"></script>
+    <script type="module" src="./js/search.js"></script>
   </body>
 </html>
