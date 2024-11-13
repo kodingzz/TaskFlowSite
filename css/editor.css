@@ -14,14 +14,21 @@ textarea.title-input {
   */
   width: 100%;
   border: none;
+  outline: 0;
+  resize: none;
   background: transparent;
   color: #525252;
-  font-weight: bold;
-  font-size: 18px;
+  font-size: 25px;
+  padding-top: 25px;
 }
 
 textarea.title-input::placeholder {
   color: #525252;
   font-weight: bold;
-  font-size: 18px;
+}
+
+.title-display {
+  width: 100%;
+  font-weight: bold;
+  margin-top: 20px;
 }

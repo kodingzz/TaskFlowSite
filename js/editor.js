@@ -2,7 +2,6 @@
 
 const titleDisplay = document.getElementById("title-display");
 const titleInput = document.getElementById("title-input");
-//const contentInput = document.getElementById("content-input");
 
 function saveTitle() {
   const title = titleInput.value.trim();
