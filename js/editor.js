@@ -130,6 +130,9 @@ document.querySelector("#editor").addEventListener("input", function (e) {
       ) {
         // Unordered list 처리
         createNewUlItem(currentBlock);
+      } else if (textContent.trim() === "line") {
+        // 구분선 처리
+        createHorizontalRule(currentBlock);
       }
     }
   }
@@ -249,4 +252,18 @@ function deleteListItem(parentEl) {
     newTextBlock.focus();
     setCaretToEnd(newTextBlock);
   }
+}
+// 구분선 생성 함수
+function createHorizontalRule(block) {
+  const hr = document.createElement("hr");
+  block.replaceWith(hr);
+
+  const newTextBlock = document.createElement("div");
+  newTextBlock.classList.add("text-block");
+  newTextBlock.contentEditable = "true";
+
+  hr.parentNode.insertBefore(newTextBlock, hr.nextSibling);
+
+  newTextBlock.focus();
+  setCaretToEnd(newTextBlock);
 }
