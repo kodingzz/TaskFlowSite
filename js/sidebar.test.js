@@ -79,8 +79,25 @@ async function addDoc(doc) {
   sidebarItems.appendChild(makeItem(doc));
 }
 
+function findDocID(list, id) {
+  for (const doc of list) {
+    if (doc.id === Number(id)) {
+      console.log(1, doc.id, Number(id));
+      return doc;
+    }
+    if (doc.documents.length > 0) {
+      const result = findDocID(doc.documents, id);
+      console.log(2, doc.id, Number(id), result);
+      if (result) return doc;
+    }
+  }
+  return "";
+}
+
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
 function loadTextEditor(id) {
+  let dirContent = '<a href="/">Home</a>';
+  // if (id) dirContent += findDocID(docList, id).title;
   const content =
     id === "Content"
       ? `<div class="intro">어서오세요</div>`
