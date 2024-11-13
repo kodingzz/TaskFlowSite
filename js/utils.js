@@ -7,8 +7,8 @@ export async function loadSidebarDocs() {
   const documents = await handleGetAllDocs();
   docList = documents;
 
-  documents.forEach((doc) => {
-    addDoc(doc);
+  documents.forEach(async (doc) => {
+    await addDoc(doc);
   });
 }
 async function addDoc(doc) {
@@ -79,22 +79,12 @@ export function loadEditorScript() {
     const newScript = document.createElement("script");
     newScript.id = id;
     newScript.src = `/js/editor.js`;
+    newScript.type = "module";
     document.body.appendChild(newScript);
   }
 }
-const EDITOR_TEMP = ` <div class="editor-content">
-  <input
-    id="title-input"
-    class="title-input"
-    placeholder="제목"
-  />
-<div id="text-container">
-<div class="text-block" contenteditable="true"></div>
-</div>
-</div>
-`;
-// URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
-export async function loadTextEditor(id) {
+
+export async function makePath(id) {
   let dirContent = '<a href="/">Home</a>';
   let paths = [];
   if (id && id !== "Content") {
@@ -103,7 +93,36 @@ export async function loadTextEditor(id) {
   paths.forEach((item) => {
     dirContent += `<span>/</span><a href="/documents/${item.id}" data-url="${item.id}">${item.title}</a>`;
   });
+  return dirContent;
+}
 
+export async function makePathDir(id) {
+  console.log(id);
+  const dir = document.querySelector(".editor-dir");
+  if (dir) dir.innerHTML = await makePath(id);
+}
+
+// URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
+export async function loadTextEditor(id) {
+  const dirContent = await makePath(id);
+  let data = id !== "Content" && (await handleGetDocById(id));
+  console.log(data);
+  const EDITOR_TEMP = `<div class="editor-content">
+  <input
+    id="title-input"
+    class="title-input"
+    placeholder="제목"
+    value="${data ? data.title : "제목없음"}"
+  />
+<div id="text-container">
+${
+  data && data.content !== null
+    ? data.content
+    : '<div class="text-block" contenteditable="true"></div>'
+}
+</div>
+</div>
+`;
   const content =
     id === "Content"
       ? `
@@ -124,9 +143,7 @@ export async function loadTextEditor(id) {
   // 경로 읽기
   document.querySelector(".editor-dir").addEventListener("click", (e) => {
     e.preventDefault();
-
     const id = e.target.dataset.url;
-
     if (!id) {
       history.pushState({ page: "/" }, "", `/`); // root로 이동
       loadTextEditor("Content");
