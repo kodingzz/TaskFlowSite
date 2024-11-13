@@ -7,33 +7,69 @@ import {
   handleGetDocById,
 } from "./client.js";
 
+import { loadEditorScript } from "./utils.js";
+
+const EDITOR_TEMP = ` <div class="editor-content">
+<h2 id="title-display"></h2>
+<div class="title-container">
+  <textarea
+    id="title-input"
+    class="title-input"
+    placeholder="제목"
+  ></textarea>
+</div>
+<div class="text-block" contenteditable="true"></div>
+</div>`;
+
+//사이드바 닫힘 & 펼침
+// hidden 토글
+document.getElementById("toggleSidebar").addEventListener("click", () => {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.add("hidden"); // 사이드바 접기/펼치기
+  localStorage.setItem("isMenuClose", true);
+  makeOpenSidebarBtn();
+});
+function makeOpenSidebarBtn() {
+  const editorTop = document.querySelector(".editor-top");
+  const openBtn = document.createElement("button");
+  openBtn.classList.add("sidebar-btn");
+  openBtn.classList.add("openBtn");
+  openBtn.id = "sidebarOpenBtn";
+  openBtn.addEventListener("click", function () {
+    sidebar.classList.remove("hidden");
+    localStorage.setItem("isMenuClose", false);
+    this.remove();
+  });
+  editorTop.prepend(openBtn);
+}
+
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
-const aEls = document.querySelectorAll(".sidebar-item-content a");
 
+let docList = [];
 async function loadSidebarDocs() {
-  // 기존 문서 항목 모두 제거
   sidebarItems.innerHTML = "";
-
-  // 모든 문서를 가져와 사이드바에 추가
-
   const documents = await handleGetAllDocs();
-  console.log(doc);
+  docList = documents;
 
-  // 문서를 순회하며 사이드바에 추가
   documents.forEach((doc) => {
     addDoc(doc);
   });
 }
 
-async function addDoc(doc) {
-  // 문서 객체 생성
+function makeItem(doc, depth = 1) {
   const li = document.createElement("li");
   li.classList.add("sidebar-item");
+  const closeArr = localStorage.getItem("closeArr");
+  const convertedCloseArr = closeArr ? JSON.parse(closeArr) : [];
+  if (convertedCloseArr.includes(doc.id.toString())) li.classList.add("close");
 
   const divContent = document.createElement("div");
   divContent.classList.add("sidebar-item-content");
+
+  const btnToggle = document.createElement("button");
+  btnToggle.classList.add("sidebar-item-toggle");
 
   const a = document.createElement("a");
   a.href = `/documents/${doc.id}`;
@@ -51,17 +87,17 @@ async function addDoc(doc) {
   btnRemove.classList.add("sidebar-item-remove");
   btnRemove.textContent = "-";
 
-  const subDocItems = document.createElement("ul");
-
-  divBtns.appendChild(btnAdd);
+  // depth가 3이상이면 추가버튼 x
+  if (depth < 3) {
+    divContent.prepend(btnToggle);
+    divBtns.appendChild(btnAdd);
+  }
   divBtns.appendChild(btnRemove);
 
   divContent.appendChild(a);
   divContent.appendChild(divBtns);
 
   li.appendChild(divContent);
-  li.appendChild(subDocItems);
-  sidebarItems.appendChild(li);
 
   // 링크 클릭 시 새로운 페이지 로드 처리
   a.addEventListener("click", (e) => {
@@ -70,18 +106,94 @@ async function addDoc(doc) {
     history.pushState({ page: id }, "", `/documents/${id}`);
     loadTextEditor(id);
   });
+
+  if (doc.documents.length !== 0 && depth < 3) {
+    const childList = document.createElement("ul");
+    doc.documents.forEach((childDoc) =>
+      childList.appendChild(makeItem(childDoc, depth + 1))
+    );
+    li.appendChild(childList);
+  }
+  return li;
+}
+
+async function addDoc(doc) {
+  sidebarItems.appendChild(makeItem(doc));
+}
+
+// 현재 문서에서부터 최상위 문서까지 루트 찾기
+async function pathfromRoot(docId, docList) {
+  const path = [];
+  let currentDoc = await handleGetDocById(docId);
+
+  // 최상위 문서 도달할때까지 반복
+  while (currentDoc) {
+    path.unshift(currentDoc);
+    currentDoc = findParentDoc(currentDoc.id, docList);
+  }
+
+  return path;
+}
+
+// 재귀적으로 부모 문서 찾기
+function findParentDoc(childId, docs) {
+  for (const doc of docs) {
+    if (doc.documents.some((subDoc) => subDoc.id === childId)) {
+      return doc;
+    }
+    // 하위문서 더 있는 경우
+    const parentDoc = findParentDoc(childId, doc.documents);
+    if (parentDoc) return parentDoc;
+  }
+  return null;
 }
 
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
-function loadTextEditor(id) {
-  const content = id
-    ? `
-     <div class="text-block" contenteditable="true">
-        <h1>새 페이지</h1>
-     </div>
+async function loadTextEditor(id) {
+  let dirContent = '<a href="/">Home</a>';
+  let paths = [];
+  if (id && id !== "Content") {
+    paths = await pathfromRoot(id, docList);
+  }
+  paths.forEach((item) => {
+    dirContent += `<span>/</span><a href="/documents/${item.id}" data-url="${item.id}">${item.title}</a>`;
+  });
+
+  const content =
+    id === "Content"
+      ? `
+      <div class="editor-top">
+    <div class="editor-dir">${dirContent}</div>
+  </div>
+      <div class="intro">Hello World</div>`
+      : id
+      ? `
+    <div class="editor-top">
+    <div class="editor-dir">${dirContent}</div>
+  </div>
+ ${EDITOR_TEMP}
   `
-    : "<h1>페이지를 찾을 수 없습니다.</h1>";
+      : "<h1>페이지를 찾을 수 없습니다.</h1>";
   editor.innerHTML = content;
+
+  // 경로 읽기
+  document.querySelector(".editor-dir").addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const id = e.target.dataset.url;
+
+    if (!id) {
+      history.pushState({ page: "/" }, "", `/`); // root로 이동
+      loadTextEditor("Content");
+    } else {
+      history.pushState({ page: id }, "", `/documents/${id}`);
+      loadTextEditor(id);
+    }
+  });
+  loadEditorScript();
+  const isMenuClose = localStorage.getItem("isMenuClose");
+  console.log("isMenuClose", isMenuClose);
+  if (isMenuClose === "true") makeOpenSidebarBtn();
 }
 
 // 뒤로 가기/앞으로 가기 시 페이지 로드 처리
@@ -92,31 +204,43 @@ window.addEventListener("popstate", function (event) {
 
 // 부모 문서 추가 (문서 추가 시 사이드바에 표시)
 addDocBtn.addEventListener("click", async () => {
-  const data = await handleCreateDoc(
-    JSON.stringify({ title: "새 페이지", parent: null })
-  );
+  await handleCreateDoc(JSON.stringify({ title: "새 페이지", parent: null }));
   loadSidebarDocs(); // 모든 문서 다시 로드
 });
 
 // 페이지 로드 시 문서들을 가져오는 코드
-window.onload = loadSidebarDocs();
+window.onload = async function () {
+  await loadSidebarDocs();
+};
 
+// 하위 문서 추가 ( li,button 태그가 동적으로 생성되서 이벤트 할당이 안되는 issue) 및 문서 삭제
 sidebarItems.addEventListener("click", async (e) => {
-  const subDocItems = e.currentTarget.firstElementChild.lastElementChild;
   const parentId =
-    e.target.parentElement.parentElement.firstElementChild.dataset.url;
+    e.target.parentElement.parentElement.querySelector("a").dataset.url;
 
-  // 하위 문서 추가
-  if (e.target.classList.contains("sidebar-item-add")) {
-    const data = await handleCreateDoc(
-      JSON.stringify({ title: "하위 페이지", parent: parentId })
-    );
-
-    loadSidebarDocs(); // 모든 문서 다시 로드
-
-    //  문서 삭제
-  } else if (e.target.classList.contains("sidebar-item-remove")) {
-    const data = await handleDeleteDoc(parentId);
+  if (e.target.classList.contains("sidebar-item-toggle")) {
+    const li = e.target.parentElement.parentElement;
+    li.classList.toggle("close");
+    const closeArr = localStorage.getItem("closeArr");
+    const convertedCloseArr = closeArr ? JSON.parse(closeArr) : [];
+    if (convertedCloseArr.includes(parentId) && !li.classList.contains("close"))
+      localStorage.setItem(
+        "closeArr",
+        JSON.stringify(convertedCloseArr.filter((num) => num !== parentId))
+      );
+    else
+      localStorage.setItem(
+        "closeArr",
+        JSON.stringify([...convertedCloseArr, parentId])
+      );
+  } else {
+    if (e.target.classList.contains("sidebar-item-add")) {
+      await handleCreateDoc(
+        JSON.stringify({ title: "하위 페이지", parent: parentId })
+      );
+    } else if (e.target.classList.contains("sidebar-item-remove")) {
+      await handleDeleteDoc(parentId);
+    }
     loadSidebarDocs(); // 모든 문서 다시 로드
   }
 });
