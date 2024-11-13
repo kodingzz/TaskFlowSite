@@ -40,15 +40,16 @@ document
     if (e.key === "Delete" || e.key === "Backspace") {
       const previousBlock = currentBlock.previousElementSibling;
 
+      if (!previousBlock.classList.contains("text-block")) {
+        e.preventDefault();
+        currentBlock.focus();
+        setCaretToEnd(currentBlock);
+      }
+
       if (
         currentBlock.tagName === "DIV" &&
         currentBlock.textContent.trim() === ""
       ) {
-        if (!previousBlock.classList.contains("text-block")) {
-          e.preventDefault();
-          currentBlock.focus();
-          setCaretToEnd(currentBlock);
-        }
         if (isPreviousBlockList(previousBlock)) {
           e.preventDefault(); // 기본 동작 방지
           currentBlock.remove(); // 현재 빈 div 블록 삭제
@@ -69,7 +70,7 @@ document
         }
       }
 
-      // ul/ol 블록 내의 li가 비어있고 삭제된 경우 처리
+      // ul/ol 내 li 삭제
       if (
         currentBlock.tagName === "LI" &&
         currentBlock.textContent.trim() === ""
@@ -223,7 +224,12 @@ function deleteListItem(parentEl) {
   // 만약 부모 리스트 안에 li가 더 이상 없다면 부모 리스트 삭제
   if (parentList.querySelectorAll("li").length === 0) {
     const previousBlock = parentList.previousElementSibling; // 부모 리스트의 이전 형제 요소 찾기
+
     parentList.remove(); // 부모 리스트 삭제
+    if (previousBlock) {
+      previousBlock.focus(); // 이전 블록으로 포커스 이동
+      setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
+    }
 
     // 새로 생성된 div를 부모 리스트의 형제 요소로 추가
     if (nextSibling) {
