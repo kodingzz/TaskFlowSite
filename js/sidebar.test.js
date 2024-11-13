@@ -7,6 +7,8 @@ import {
   handleGetDocById,
 } from "./client.js";
 
+import { loadEditorScript } from "./utils.js";
+
 const EDITOR_TEMP = ` <div class="editor-content">
 <h2 id="title-display"></h2>
 <div class="title-container">
@@ -152,12 +154,12 @@ async function loadTextEditor(id) {
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   editor.innerHTML = content;
 
-
   document.querySelector(".editor-dir").addEventListener("click", (e) => {
     e.preventDefault();
     const id = e.target.dataset.url;
     history.pushState({ page: id }, "", `/documents/${id}`);
   });
+  loadEditorScript();
 }
 
 // 뒤로 가기/앞으로 가기 시 페이지 로드 처리
