@@ -130,12 +130,14 @@ function findParentDoc(childId, docs) {
 async function loadTextEditor(id) {
   let dirContent = '<a href="/">Home</a>';
   let paths = [];
-  if (id) {
+  if (id && id !== "Content") {
     paths = await pathfromRoot(id, docList);
   }
   paths.forEach((item) => {
     dirContent += `<span>/</span><a href="/documents/${item.id}" data-url="${item.id}">${item.title}</a>`;
   });
+
+  console.log(dirContent);
 
   const content =
     id === "Content"
@@ -154,11 +156,19 @@ async function loadTextEditor(id) {
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   editor.innerHTML = content;
 
+  // 경로 읽기
   document.querySelector(".editor-dir").addEventListener("click", (e) => {
     e.preventDefault();
+
     const id = e.target.dataset.url;
-    history.pushState({ page: id }, "", `/documents/${id}`);
-    loadTextEditor(id);
+
+    if (!id) {
+      history.pushState({ page: "/" }, "", `/`); // root로 이동
+      loadTextEditor("Content");
+    } else {
+      history.pushState({ page: id }, "", `/documents/${id}`);
+      loadTextEditor(id);
+    }
   });
   loadEditorScript();
 }
