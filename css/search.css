@@ -68,8 +68,7 @@
   border: 8px solid #181818;
   border-radius: 12px;
   background-color: #181818;
-  color: #ffffff;
-  text-align: center;
+  overflow-y: scroll;
 }
 
 .modal-content {
@@ -81,4 +80,5 @@
   border-radius: 8px;
   color: #ffffff;
   font-size: 14px;
+  overflow-y: scroll;
 }
