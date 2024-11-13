@@ -79,23 +79,23 @@ async function addDoc(doc) {
 
 function findDocID(list, id) {
   for (const doc of list) {
-    if (doc.id === id) {
-      console.log(doc);
+    if (doc.id === Number(id)) {
+      console.log(1, doc.id, Number(id));
+      return doc;
     }
     if (doc.documents.length > 0) {
       const result = findDocID(doc.documents, id);
-      if (result) {
-        console.log(result);
-      }
+      console.log(2, doc.id, Number(id), result);
+      if (result) return doc;
     }
   }
+  return "";
 }
 
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
 function loadTextEditor(id) {
-  console.log(id);
   let dirContent = '<a href="/">Home</a>';
-  if (id) findDocID(docList, id);
+  // if (id) dirContent += findDocID(docList, id).title;
   const content =
     id === "Content"
       ? `
