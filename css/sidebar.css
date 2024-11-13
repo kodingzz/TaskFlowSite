@@ -29,7 +29,7 @@
   overflow: hidden;
 }
 .sidebar-item > ul .sidebar-item > ul {
-  padding-left: 3rem;
+  padding-left: 40px;
 }
 .sidebar-item.close > ul {
   height: 1px;
