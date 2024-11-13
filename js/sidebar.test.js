@@ -107,8 +107,16 @@ function findDocID(list, id) {
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
 function loadTextEditor(id) {
   console.log(id);
-  let dirContent = '<a href="/">Home</a>'; // <span>/</span><a href="/documents/139943">새 페이지</a>
-  // if (id) findDocID(docList, id);
+  let dirContent = '<a href="/">Home</a>';
+  // <span>/</span><a href="/documents/139943">새 페이지</a>
+  let path = findDocID(docList, id);
+  if (id) {
+    dirContent += path
+      .map((title, index) => `<span>/</span><a href="/${id}/>${id.title}</a>`)
+      .join("");
+  }
+  console.log(path);
+
   const content =
     id === "Content"
       ? `
