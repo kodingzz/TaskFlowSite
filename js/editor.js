@@ -1,34 +1,26 @@
 // 타이틀 에디터
 const titleDisplay = document.getElementById("title-display");
 const titleInput = document.getElementById("title-input");
-
 function saveTitle() {
   const title = titleInput.value.trim();
   if (title) {
     titleDisplay.textContent = title;
-    titleInput.style.display = "none";
+    titleInput.style.visibility = "hidden";
     titleDisplay.style.display = "block";
   }
 }
 function editTitle() {
-  titleInput.style.display = "block";
+  titleInput.style.visibility = "visible";
   titleDisplay.style.display = "none";
   titleInput.value = titleDisplay.textContent.trim();
 }
 
 titleInput.addEventListener("keydown", function (e) {
-<<<<<<< HEAD
-  if (e.key === "Enter") {
-    e.preventDefault(); // Enter 키로 줄 바꿈 방지
-    saveTitle(); // 제목 저장
-=======
   if (e.key === "Enter" || "Tab") {
     e.preventDefault();
     saveTitle();
->>>>>>> 1b821a3e9bd781e23e62bde4ded4a1d57148d6db
   }
 });
-
 titleDisplay.addEventListener("click", function () {
   editTitle();
 });
@@ -56,17 +48,6 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
       newListItem.contentEditable = "true"; // 새 li를 편집 가능하게 설정
       parentUl.appendChild(newListItem); // ul의 자식으로 새 li를 추가
       newListItem.focus(); // 새 li에 포커스를 이동
-    }
-    {
-      // 구분선에서
-      const newNextBlock = document.createElement("div");
-      newNextBlock.classList.add("text-block");
-      newNextBlock.contentEditable = "true";
-      currentBlock.parentNode.insertBefore(
-        newNextBlock,
-        currentBlock.nextSibling
-      );
-      newNextBlock.focus();
     }
   }
 
@@ -180,8 +161,6 @@ document.querySelector("#editor").addEventListener("input", function (e) {
       ) {
         // Unordered list 처리
         createNewUlItem(currentBlock);
-      } else if (/^-{3,}$/.test(textContent.trim())) {
-        createDivider(currentBlock); // 구분선 처리
       }
     }
   }
@@ -256,9 +235,5 @@ function createNewOlItem(block) {
   newListItem.contentEditable = "true";
   newListItem.focus();
 }
-function createDivider(block) {
-  const hr = document.createElement("hr");
-  hr.classList.add("text-block");
-  block.replaceWith(hr);
-  hr.focus();
-}
+
+//
