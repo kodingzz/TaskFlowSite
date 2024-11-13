@@ -32,3 +32,13 @@ textarea.title-input::placeholder {
   font-weight: bold;
   margin-top: 20px;
 }
+
+.hr {
+  /*구분선 스타일을 추가*/
+  border: "none"; /*기본 스타일 제거*/
+  height: "2px"; /*구분선 두께*/
+  background-color: "#000"; /*구분선 색상*/
+  margin: "20px 0"; /*상하 여백 추가*/
+  width: "100%"; /*100% 너비로 설정*/
+  cursor: "text"; /*커서 스타일 (텍스트 입력 가능하게 보이기)*/
+}

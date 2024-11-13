@@ -206,12 +206,11 @@ function createBlockquote(block) {
 }
 
 function createDivider(block) {
-  const divider = document.createElement("divider");
-  divider.classList.add("divider");
+  const hr = document.createElement("hr");
+  hr.classList.add("text-block");
 
-  block.replaceWith(divider);
-  divider.contentEditable = "true";
-  divider.focus();
+  block.replaceWith(hr); // 기존 블록을 <hr>로 대체
+  hr.focus(); // 구분선에 포커스
 }
 
 function createListItem(block) {
