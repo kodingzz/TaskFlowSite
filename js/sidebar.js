@@ -12,6 +12,20 @@ const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
 const aEls = document.querySelectorAll(".sidebar-item-content a");
 
+async function loadSidebarDocs() {
+  // 기존 문서 항목 모두 제거
+  sidebarItems.innerHTML = "";
+
+  // 모든 문서를 가져와 사이드바에 추가
+
+  const documents = await handleGetAllDocs();
+
+  // 문서를 순회하며 사이드바에 추가
+  documents.forEach((doc) => {
+    addDoc(doc);
+  });
+}
+
 async function addDoc(doc) {
   // 문서 객체 생성
   const li = document.createElement("li");
@@ -54,17 +68,6 @@ async function addDoc(doc) {
   });
 }
 
-// 링크 클릭 시 이벤트 핸들러
-// aEls.forEach((aEl) =>
-//   aEl.addEventListener("click", function (e) {
-//     e.preventDefault();
-
-//     const id = e.currentTarget.dataset.url;
-//     history.pushState({ page: id }, "", `/documents/${id}`);
-//     loadTextEditor(id);
-//   })
-// );
-
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
 function loadTextEditor(id) {
   const content = id
@@ -88,23 +91,12 @@ addDocBtn.addEventListener("click", async () => {
   const data = await handleCreateDoc(
     JSON.stringify({ title: "새 페이지", parent: null })
   );
-  addDoc(data);
+  loadSidebarDocs(); // 모든 문서 다시 로드
 });
 
 // 페이지 로드 시 문서들을 가져오는 코드
 window.onload = async function () {
-  let headersList = {
-    Accept: "*/*",
-    "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-    "x-username": "HW-5",
-  };
-
-  const response = await fetch("https://kdt-api.fe.dev-cos.com/documents", {
-    method: "GET",
-    headers: headersList,
-  });
-
-  const documents = await response.json();
+  const documents = await handleGetAllDocs();
 
   // 문서 데이터 가져오기 및 사이드바에 추가
   documents.forEach((doc) => {
@@ -114,26 +106,16 @@ window.onload = async function () {
 
 // 하위 문서 추가 ( li,button 태그가 동적으로 생성되서 이벤트 할당이 안되는 issue) 및 문서 삭제
 sidebarItems.addEventListener("click", async (e) => {
-  const parentId = e.target.parentElement.previousSibling.dataset.url;
+  const parentId =
+    e.target.parentElement.parentElement.firstElementChild.dataset.url;
+
   if (e.target.classList.contains("sidebar-item-add")) {
-    let headersList = {
-      Accept: "*/*",
-      "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-      "x-username": "HW-5",
-      "Content-Type": "application/json",
-    };
-
-    let bodyContent = JSON.stringify({
-      title: "하위 페이지",
-      parent: parentId,
-    });
-
-    let response = await fetch("https://kdt-api.fe.dev-cos.com/documents", {
-      method: "POST",
-      body: bodyContent,
-      headers: headersList,
-    });
+    const data = await handleCreateDoc(
+      JSON.stringify({ title: "하위 페이지", parent: parentId })
+    );
+    loadSidebarDocs(); // 모든 문서 다시 로드
   } else if (e.target.classList.contains("sidebar-item-remove")) {
     const data = await handleDeleteDoc(parentId);
+    loadSidebarDocs(); // 모든 문서 다시 로드
   }
 });
