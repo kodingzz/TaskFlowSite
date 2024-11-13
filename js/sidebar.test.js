@@ -145,7 +145,7 @@ async function loadTextEditor(id) {
       <div class="editor-top">
     <div class="editor-dir">${dirContent}</div>
   </div>
-      <div class="intro">어서오세요</div>`
+      <div class="intro">Hello World</div>`
       : id
       ? `
     <div class="editor-top">
