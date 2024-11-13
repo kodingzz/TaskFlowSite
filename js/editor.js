@@ -1,10 +1,9 @@
-let titleInput = document.getElementById("title-input");
-
-titleInput.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    document.querySelectorAll(".text-block")[0].focus();
-  }
-});
+// titleInput.addEventListener("keydown", function (event) {
+//   if (event.key === "Enter") {
+//     console.log(document.querySelectorAll(".text-block")[0]);
+//     createNewBlock(document.querySelectorAll(".text-block")[0]);
+//   }
+// });
 
 // 텍스트 에디터
 
@@ -15,80 +14,82 @@ function isPreviousBlockList(block) {
 
 // default 텍스트 블록에 대한 키보드 입력 처리
 // Enter 키를 누를 때 동작
-document
-  .querySelector("#text-container")
-  .addEventListener("keydown", function (e) {
-    const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
+document.querySelector("#editor").addEventListener("keydown", function (e) {
+  const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
+  const titleInput = document.getElementById("title-input");
 
-    // Enter 키가 눌렸을 때
-    if (e.key === "Enter") {
-      e.preventDefault(); // 기본 Enter 동작을 막음
+  // Enter 키가 눌렸을 때
+  if (e.key === "Enter") {
+    e.preventDefault(); // 기본 Enter 동작을 막음
 
-      // 현재 블록이 text-block일 경우, 새 블록을 생성
-      if (currentBlock.classList.contains("text-block")) {
-        createNewBlock(currentBlock);
-      }
+    // 현재 포커스가 Text input일때
+    if (currentBlock === titleInput) createNewFirstBlock();
 
-      // 리스트 블록일 경우 li를 계속함
-      if (currentBlock.tagName === "LI") {
-        const parentEl = currentBlock.parentElement;
-        continueLiBlock(parentEl);
-      }
+    // 현재 블록이 text-block일 경우, 새 블록을 생성
+    if (currentBlock.classList.contains("text-block")) {
+      createNewBlock(currentBlock);
     }
 
-    // Delete/Backspace 키 처리
-    if (e.key === "Delete" || e.key === "Backspace") {
-      const previousBlock = currentBlock.previousElementSibling;
+    // 리스트 블록일 경우 li를 계속함
+    if (currentBlock.tagName === "LI") {
+      const parentEl = currentBlock.parentElement;
+      continueLiBlock(parentEl);
+    }
+  }
 
-      if (
-        currentBlock.tagName === "DIV" &&
-        currentBlock.textContent.trim() === ""
-      ) {
-        if (!previousBlock.classList.contains("text-block")) {
-          e.preventDefault();
-          currentBlock.focus();
-          setCaretToEnd(currentBlock);
+  // Delete/Backspace 키 처리
+  if (e.key === "Delete" || e.key === "Backspace") {
+    const previousBlock = currentBlock.previousElementSibling;
+
+    if (
+      currentBlock.tagName === "DIV" &&
+      currentBlock.textContent.trim() === ""
+    ) {
+      if (!previousBlock.classList.contains("text-block")) {
+        e.preventDefault();
+        currentBlock.focus();
+        setCaretToEnd(currentBlock);
+      }
+      if (isPreviousBlockList(previousBlock)) {
+        e.preventDefault(); // 기본 동작 방지
+        currentBlock.remove(); // 현재 빈 div 블록 삭제
+
+        // 이전 ul/ol의 마지막 자식 요소를 찾고 포커스 이동
+        const lastChild = previousBlock.lastElementChild;
+        if (lastChild) {
+          lastChild.focus(); // 마지막 li에 포커스 이동
+          setCaretToEnd(lastChild); // 마지막 글자 뒤로 커서 이동
         }
-        if (isPreviousBlockList(previousBlock)) {
-          e.preventDefault(); // 기본 동작 방지
-          currentBlock.remove(); // 현재 빈 div 블록 삭제
-
-          // 이전 ul/ol의 마지막 자식 요소를 찾고 포커스 이동
-          const lastChild = previousBlock.lastElementChild;
-          if (lastChild) {
-            lastChild.focus(); // 마지막 li에 포커스 이동
-            setCaretToEnd(lastChild); // 마지막 글자 뒤로 커서 이동
-          }
-        } else {
-          e.preventDefault(); // 기본 동작 방지
-          currentBlock.remove(); // 현재 빈 div 블록 삭제
-          if (previousBlock) {
-            previousBlock.focus(); // 이전 블록으로 포커스 이동
-            setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
-          }
+      } else {
+        e.preventDefault(); // 기본 동작 방지
+        currentBlock.remove(); // 현재 빈 div 블록 삭제
+        if (previousBlock) {
+          previousBlock.focus(); // 이전 블록으로 포커스 이동
+          setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
         }
       }
-
-      // ul/ol 블록 내의 li가 비어있고 삭제된 경우 처리
-      if (
-        currentBlock.tagName === "LI" &&
-        currentBlock.textContent.trim() === ""
-      ) {
-        const parentEl =
-          currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
-        deleteListItem(parentEl);
-      }
     }
 
-    // 키 업/다운 이동 처리
-    if (e.key === "ArrowUp" && currentBlock.previousElementSibling) {
-      currentBlock.previousElementSibling.focus();
+    // ul/ol 블록 내의 li가 비어있고 삭제된 경우 처리
+    if (
+      currentBlock.tagName === "LI" &&
+      currentBlock.textContent.trim() === ""
+    ) {
+      const parentEl =
+        currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
+      deleteListItem(parentEl);
     }
+  }
 
-    if (e.key === "ArrowDown" && currentBlock.nextElementSibling) {
-      currentBlock.nextElementSibling.focus();
-    }
-  });
+  // 키 업/다운 이동 처리
+  if (e.key === "ArrowUp" && currentBlock.previousElementSibling) {
+    currentBlock.previousElementSibling.focus();
+  }
+
+  if (e.key === "ArrowDown" && currentBlock.nextElementSibling) {
+    currentBlock.nextElementSibling.focus();
+  }
+});
 
 // 커서를 마지막에 위치시키는 함수
 function setCaretToEnd(element) {
@@ -103,7 +104,6 @@ function setCaretToEnd(element) {
 // 텍스트 입력 처리시 반응하는 이벤트 리스너
 document.querySelector("#editor").addEventListener("input", function (e) {
   const currentBlock = document.activeElement;
-  console.log(e.data);
 
   // 텍스트 블록 내에서만 처리
   if (currentBlock && currentBlock.classList.contains("text-block")) {
@@ -135,6 +135,15 @@ document.querySelector("#editor").addEventListener("input", function (e) {
   }
 });
 
+// 새로운 텍스트 블록 생성 함수
+function createNewFirstBlock() {
+  const newTextBlock = document.createElement("div");
+  newTextBlock.classList.add("text-block");
+  newTextBlock.contentEditable = "true";
+
+  document.getElementById("text-container").prepend(newTextBlock);
+  newTextBlock.focus();
+}
 // 새로운 텍스트 블록 생성 함수
 function createNewBlock(currentBlock) {
   const newTextBlock = document.createElement("div");
