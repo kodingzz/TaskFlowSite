@@ -37,7 +37,6 @@ searchForm.addEventListener("submit", async (e) => {
 
   //  검색 결과들
   const allDocs = await handleGetAllDocs();
-
   const results = searchDocs(allDocs, term);
 
   let contents = "";
