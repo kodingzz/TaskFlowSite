@@ -25,7 +25,7 @@ const editor = document.querySelector("#editor");
 async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
-  docList = documents;
+  // docList = documents;
   documents.forEach((doc) => {
     addDoc(doc);
   });
@@ -108,7 +108,7 @@ function findDocID(list, id) {
 function loadTextEditor(id) {
   console.log(id);
   let dirContent = '<a href="/">Home</a>';
-  if (id) findDocID(docList, id);
+  // if (id) findDocID(docList, id);
   const content =
     id === "Content"
       ? `<div class="intro">어서오세요</div>`
