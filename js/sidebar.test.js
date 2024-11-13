@@ -156,6 +156,7 @@ async function loadTextEditor(id) {
     e.preventDefault();
     const id = e.target.dataset.url;
     history.pushState({ page: id }, "", `/documents/${id}`);
+    loadTextEditor(id);
   });
 }
 
