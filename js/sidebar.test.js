@@ -7,6 +7,8 @@ import {
   handleGetDocById,
 } from "./client.js";
 
+import { loadEditorScript } from "./utils.js";
+
 const EDITOR_TEMP = ` <div class="editor-content">
 <h2 id="title-display"></h2>
 <div class="title-container">
@@ -158,6 +160,7 @@ async function loadTextEditor(id) {
     history.pushState({ page: id }, "", `/documents/${id}`);
     loadTextEditor(id);
   });
+  loadEditorScript();
 }
 
 // 뒤로 가기/앞으로 가기 시 페이지 로드 처리
