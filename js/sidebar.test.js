@@ -4,6 +4,7 @@ import {
   handleCreateDoc,
   handleDeleteDoc,
   handleGetAllDocs,
+  handleGetDocById,
 } from "./client.js";
 
 const EDITOR_TEMP = ` <div class="editor-content">
@@ -22,10 +23,12 @@ const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
 
+let docList = [];
 async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
-  // docList = documents;
+  docList = documents;
+
   documents.forEach((doc) => {
     addDoc(doc);
   });
@@ -93,22 +96,22 @@ async function addDoc(doc) {
 function findDocID(list, id) {
   for (const doc of list) {
     if (doc.id === id) {
-      console.log(doc);
     }
+    // 상위 문서
     if (doc.documents.length > 0) {
       const result = findDocID(doc.documents, id);
-      if (result) {
-        console.log(result);
-      }
     }
   }
 }
 
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
-function loadTextEditor(id) {
-  console.log(id);
-  let dirContent = '<a href="/">Home</a>'; // <span>/</span><a href="/documents/139943">새 페이지</a>
-  // if (id) findDocID(docList, id);
+async function loadTextEditor(id) {
+  let dirContent = '<a href="/">Home</a>';
+
+  if (id) findDocID(docList, id);
+
+  // dirContent += `<span>/</span><a href="/documents/${item.id}">${item.title}</a>`;
+
   const content =
     id === "Content"
       ? `
