@@ -19,41 +19,50 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
     // 현재 포커스가 Text input일 때
     if (currentBlock === titleInput) {
       createNewFirstBlock();
+      newTextBlock.focus();
     }
-
     // 현재 블록이 text-block일 경우, 새 블록을 생성
     if (currentBlock.classList.contains("text-block")) {
       createNewBlock(currentBlock);
     }
-  }
 
+    // 리스트 블록일 경우 li를 계속함
+    if (currentBlock.tagName === "LI") {
+      const parentEl = currentBlock.parentElement;
+      continueLiBlock(parentEl);
+    }
+  }
+  ///////////////////////////////////////////////////////
   // 현재 블록 빈 블록일 때 Delete/Backspace 처리
   if (
     (e.key === "Delete" || e.key === "Backspace") &&
     currentBlock.textContent.trim() === ""
   ) {
     const previousBlock = currentBlock.previousElementSibling;
+    const textContainer = document.querySelector("#text-container");
 
     // 1. 첫 번째 텍스트 블록일 때
-    if (!previousBlock || !previousBlock.classList.contains("text-block")) {
-      e.preventDefault();
-      currentBlock.focus();
-      setCaretToEnd(currentBlock);
+    if (
+      currentBlock === document.querySelectorAll(".text-block")[0] &&
+      currentBlock.textContent.trim() === ""
+    ) {
+      titleInput.focus();
     }
 
     // 2. 현재 블록이 기본 블록일 때
     if (currentBlock.tagName === "DIV") {
+      // 2.1 이전 요소가 ul 일 때
       if (isPreviousBlockList(previousBlock)) {
         e.preventDefault(); // 기본 동작 방지
         currentBlock.remove(); // 현재 빈 div 블록 삭제
-
-        // 이전 ul/ol의 마지막 자식 요소를 찾고 포커스 이동
+        //이전 ul/ol의 마지막 자식 요소를 찾고 포커스 이동
         const lastChild = previousBlock.lastElementChild;
         if (lastChild) {
           lastChild.focus(); // 마지막 li에 포커스 이동
           setCaretToEnd(lastChild); // 마지막 글자 뒤로 커서 이동
         }
-      } else {
+      } // 2.2 이전 요소가 기본 블록일 때
+      else {
         e.preventDefault(); // 기본 동작 방지
         currentBlock.remove(); // 현재 빈 div 블록 삭제
         if (previousBlock) {
@@ -73,6 +82,8 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
       deleteListItem(parentEl);
     }
   }
+
+  /////////////////////// 구분
 
   // 키 업/다운 이동 처리
   if (e.key === "ArrowUp" && currentBlock.previousElementSibling) {
@@ -210,52 +221,37 @@ function continueLiBlock(parentEl) {
   newListItem.focus(); // 새 li에 포커스를 이동
 }
 
+///////////////////////////// /////////////
 // li 요소를 지우고 기본 블록으로 바꾸는 함수
-// li 블록을 삭제하고 div로 교체하는 함수
+
 function deleteListItem(parentEl) {
-  const currentBlock = document.activeElement; // 현재 블록 가져오기
-  const newTextBlock = document.createElement("div"); // 새로운 div 블록 생성
+  // 1. 기본 변수 세팅: 현재 li의 부모 엘리먼트 + ul 또는 ol 다음 형제 요소 + 부모 리스트의 이전 형제 요소
+  const currentBlock = document.activeElement;
+  const parentList = currentBlock.closest(parentEl);
+
+  // 2. 기본 블록 만들어서 지워진 li 블록 대체
+  // 새로운 기본 블록 생성
+  const newTextBlock = document.createElement("div");
   newTextBlock.classList.add("text-block");
   newTextBlock.contentEditable = "true";
 
-  // 현재 li의 부모 엘리먼트 찾기
-  const parentList = currentBlock.closest(parentEl);
-  const nextSibling = parentList.nextElementSibling; // ul 또는 ol 다음 형제 요소 찾기
-
-  currentBlock.replaceWith(newTextBlock); // li를 div로 교체
-
-  // 만약 부모 리스트 안에 li가 더 이상 없다면 부모 리스트 삭제
-  if (parentList.querySelectorAll("li").length === 0) {
-    const previousBlock = parentList.previousElementSibling; // 부모 리스트의 이전 형제 요소 찾기
-
-    parentList.remove(); // 부모 리스트 삭제
-    if (previousBlock) {
-      previousBlock.focus(); // 이전 블록으로 포커스 이동
-      setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
-    }
-
-    // 새로 생성된 div를 부모 리스트의 형제 요소로 추가
-    if (nextSibling) {
-      parentList.parentNode.insertBefore(newTextBlock, nextSibling);
-    } else {
-      parentList.parentNode.appendChild(newTextBlock); // 형제 요소가 없으면 부모 리스트 뒤에 div 추가
-    }
-
-    // 이전 블록으로 포커스를 이동
-    if (previousBlock) {
-      previousBlock.focus(); // 이전 블록으로 포커스 이동
-      setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
-    }
+  // li 블록을 대체
+  currentBlock.replaceWith(newTextBlock);
+  // parentList의 다음 형제로 삽입
+  if (parentList.nextSibling) {
+    parentList.parentNode.insertBefore(newTextBlock, parentList.nextSibling);
   } else {
-    // li가 남아있으면 div를 그냥 부모 리스트의 형제 요소로 추가
-    if (nextSibling) {
-      parentList.parentNode.insertBefore(newTextBlock, nextSibling);
-    } else {
-      parentList.parentNode.appendChild(newTextBlock); // 형제 요소가 없으면 부모 리스트 뒤에 div 추가
-    }
+    parentList.parentNode.appendChild(newTextBlock);
   }
 
-  newTextBlock.focus(); // 새로 생성된 div 블록에 포커스 이동
-}
+  // 새로운 블록에 포커스 이동
+  newTextBlock.focus();
+  setCaretToEnd(newTextBlock);
 
-// delete error fix
+  // 부모 요소에 li가 남아있지 않으면
+  if (parentList.querySelectorAll("li").length == 0) {
+    parentList.remove();
+    newTextBlock.focus();
+    setCaretToEnd(newTextBlock);
+  }
+}
