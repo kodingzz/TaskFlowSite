@@ -156,6 +156,7 @@ async function loadTextEditor(id) {
     e.preventDefault();
     const id = e.target.dataset.url;
     history.pushState({ page: id }, "", `/documents/${id}`);
+    loadTextEditor(id);
   });
 }
 
@@ -203,6 +204,7 @@ sidebarItems.addEventListener("click", async (e) => {
       );
     } else if (e.target.classList.contains("sidebar-item-remove")) {
       await handleDeleteDoc(parentId);
-    } else loadSidebarDocs(); // 모든 문서 다시 로드
+    }
+    loadSidebarDocs(); // 모든 문서 다시 로드
   }
 });
