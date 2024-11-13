@@ -40,6 +40,8 @@ document
     if (e.key === "Delete" || e.key === "Backspace") {
       const previousBlock = currentBlock.previousElementSibling;
 
+      // 1.
+
       if (!previousBlock.classList.contains("text-block")) {
         e.preventDefault();
         currentBlock.focus();
