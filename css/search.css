@@ -69,6 +69,8 @@
   border-radius: 12px;
   background-color: #181818;
   overflow-y: scroll;
+  color: #ffffff;
+  text-align: center;
 }
 
 .modal-content {
