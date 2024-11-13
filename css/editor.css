@@ -1,3 +1,12 @@
+.editor-content ul li {
+  list-style: disc;
+  padding-left: 20px; /* 불릿과 텍스트 간 간격 */
+}
+.editor-content ol li {
+  list-style: decimal;
+  padding-left: 20px; /* 번호와 텍스트 간의 간격 */
+}
+
 textarea.title-input {
   /*
     position: absolute;
@@ -29,6 +38,7 @@ textarea.title-input::placeholder {
 .title-display {
   width: 100%;
   font-weight: bold;
+  color: #ccc;
   /*margin-top: 20px;*/
 }
 .hr {
