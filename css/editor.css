@@ -47,19 +47,15 @@ input.title-input {
   resize: none;
   background: transparent;
   color: white;
-  font-size: 25px;
   font-weight: bold;
+  font-size: 25px;
+  margin-bottom: 8px;
 }
 input.title-input::placeholder {
   color: #525252;
   font-weight: bold;
 }
-.title-display {
-  width: 100%;
-  font-weight: bold;
-  color: white;
-  font-size: 28px;
-}
+
 .hr {
   border: "none";
   height: "2px";
