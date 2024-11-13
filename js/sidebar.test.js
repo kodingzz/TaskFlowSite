@@ -37,6 +37,9 @@ async function loadSidebarDocs() {
 function makeItem(doc, depth = 1) {
   const li = document.createElement("li");
   li.classList.add("sidebar-item");
+  const closeArr = localStorage.getItem("closeArr");
+  const convertedCloseArr = closeArr ? JSON.parse(closeArr) : [];
+  if (convertedCloseArr.includes(doc.id.toString())) li.classList.add("close");
 
   const divContent = document.createElement("div");
   divContent.classList.add("sidebar-item-content");
@@ -62,6 +65,7 @@ function makeItem(doc, depth = 1) {
 
   // depth가 3이상이면 추가버튼 x
   if (depth < 3) {
+    divContent.prepend(btnToggle);
     divBtns.appendChild(btnAdd);
   }
   divBtns.appendChild(btnRemove);
@@ -150,14 +154,30 @@ window.onload = async function () {
 // 하위 문서 추가 ( li,button 태그가 동적으로 생성되서 이벤트 할당이 안되는 issue) 및 문서 삭제
 sidebarItems.addEventListener("click", async (e) => {
   const parentId =
-    e.target.parentElement.parentElement.firstElementChild.dataset.url;
+    e.target.parentElement.parentElement.querySelector("a").dataset.url;
 
-  if (e.target.classList.contains("sidebar-item-add")) {
-    await handleCreateDoc(
-      JSON.stringify({ title: "하위 페이지", parent: parentId })
-    );
-  } else if (e.target.classList.contains("sidebar-item-remove")) {
-    await handleDeleteDoc(parentId);
+  if (e.target.classList.contains("sidebar-item-toggle")) {
+    const li = e.target.parentElement.parentElement;
+    li.classList.toggle("close");
+    const closeArr = localStorage.getItem("closeArr");
+    const convertedCloseArr = closeArr ? JSON.parse(closeArr) : [];
+    if (convertedCloseArr.includes(parentId) && !li.classList.contains("close"))
+      localStorage.setItem(
+        "closeArr",
+        JSON.stringify(convertedCloseArr.filter((num) => num !== parentId))
+      );
+    else
+      localStorage.setItem(
+        "closeArr",
+        JSON.stringify([...convertedCloseArr, parentId])
+      );
+  } else {
+    if (e.target.classList.contains("sidebar-item-add")) {
+      await handleCreateDoc(
+        JSON.stringify({ title: "하위 페이지", parent: parentId })
+      );
+    } else if (e.target.classList.contains("sidebar-item-remove")) {
+      await handleDeleteDoc(parentId);
+    } else loadSidebarDocs(); // 모든 문서 다시 로드
   }
-  loadSidebarDocs(); // 모든 문서 다시 로드
 });
