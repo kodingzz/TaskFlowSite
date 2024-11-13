@@ -30,3 +30,7 @@ a {
   text-decoration: none;
   color: white;
 }
+img {
+  display: block;
+  object-fit: cover;
+}
