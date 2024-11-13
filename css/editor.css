@@ -1,10 +1,43 @@
+.editor-content {
+  width: 1108px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.text-block {
+  width: 1008px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+/* text-block 안에 있는 <ul>과 <ol> 스타일 */
+.text-block ul,
+.text-block ol {
+  margin: 0;
+  padding-left: 20px; /* 리스트 항목 왼쪽 여백 */
+  list-style-position: inside; /* 불릿 또는 번호를 항목 안에 표시 */
+}
+
+.text-block li {
+  margin-bottom: 10px; /* 항목 간 간격 */
+  padding-left: 10px; /* 항목 내용과 불릿 간의 간격 */
+}
+
+/* 편집 가능하게 스타일링 */
+.text-block[contenteditable="true"] {
+  outline: none; /* 포커스시 기본 outline 제거 */
+}
+
+/* .editor-content 안의 리스트 스타일 */
 .editor-content ul li {
-  list-style: disc;
+  list-style: disc; /* 불릿 */
   padding-left: 20px; /* 불릿과 텍스트 간 간격 */
 }
+
 .editor-content ol li {
-  list-style: decimal;
-  padding-left: 20px; /* 번호와 텍스트 간의 간격 */
+  list-style: decimal; /* 번호 */
+  padding-left: 20px; /* 번호와 텍스트 간 간격 */
 }
 
 textarea.title-input {
@@ -39,7 +72,7 @@ textarea.title-input::placeholder {
   width: 100%;
   font-weight: bold;
   color: #ccc;
-  /*margin-top: 20px;*/
+  margin-bottom: 20px;
 }
 .hr {
   border: "none";
