@@ -15,14 +15,13 @@
 
 /* SideBar */
 #sidebar {
-  width: 300px;
-  min-width: 300px;
+  width: 250px;
+  min-width: 250px;
   height: 100vh;
   max-height: 100vh;
   overflow-y: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   background-color: var(--main-gray);
   color: white;
   transition: all 0.2s;
@@ -68,7 +67,6 @@
 }
 .sidebar-item {
   width: 100%;
-  min-height: 50px;
   display: flex;
   flex-direction: column;
 }
@@ -78,6 +76,7 @@
   gap: 4px;
   padding: 0.5rem;
   align-items: center;
+  z-index: 2;
 }
 .sidebar-item-content a {
   flex: 1;
@@ -87,11 +86,12 @@
 .sidebar-item-btns {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 4px;
 }
 .sidebar-item button {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
 }
 .sidebar-bottom {
   width: 100%;
@@ -143,7 +143,7 @@ section#editor {
   left: 0;
 }
 .editor-content {
-  padding: 1rem;
+  padding: 7rem 1rem;
 }
 
 /**/

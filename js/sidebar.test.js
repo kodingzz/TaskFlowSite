@@ -237,9 +237,10 @@ sidebarItems.addEventListener("click", async (e) => {
       await handleCreateDoc(
         JSON.stringify({ title: "하위 페이지", parent: parentId })
       );
+      loadSidebarDocs(); // 모든 문서 다시 로드
     } else if (e.target.classList.contains("sidebar-item-remove")) {
       await handleDeleteDoc(parentId);
+      loadSidebarDocs(); // 모든 문서 다시 로드
     }
-    loadSidebarDocs(); // 모든 문서 다시 로드
   }
 });

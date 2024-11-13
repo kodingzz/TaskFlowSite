@@ -29,6 +29,7 @@ document.getElementById("toggleSidebar").addEventListener("click", () => {
   localStorage.setItem("isMenuClose", true);
   makeOpenSidebarBtn();
 });
+
 function makeOpenSidebarBtn() {
   const editorTop = document.querySelector(".editor-top");
   const openBtn = document.createElement("button");
@@ -104,7 +105,7 @@ function makeItem(doc, depth = 1) {
     e.preventDefault();
     const id = e.currentTarget.dataset.url;
     history.pushState({ page: id }, "", `/documents/${id}`);
-    loadTextEditor(id);
+    // loadTextEditor(id);
   });
 
   if (doc.documents.length !== 0 && depth < 3) {
