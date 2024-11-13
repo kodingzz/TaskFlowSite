@@ -4,7 +4,6 @@ import {
   handleCreateDoc,
   handleDeleteDoc,
   handleGetAllDocs,
-  handleGetDocById,
 } from "./client.js";
 
 const EDITOR_TEMP = ` <div class="editor-content">
@@ -26,7 +25,7 @@ const editor = document.querySelector("#editor");
 async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
-
+  // docList = documents;
   documents.forEach((doc) => {
     addDoc(doc);
   });
@@ -58,6 +57,7 @@ function makeItem(doc, depth = 1) {
   btnRemove.classList.add("sidebar-item-remove");
   btnRemove.textContent = "-";
 
+  // depth가 3이상이면 추가버튼 x
   if (depth < 3) {
     divBtns.appendChild(btnAdd);
   }
@@ -108,7 +108,7 @@ function findDocID(list, id) {
 function loadTextEditor(id) {
   console.log(id);
   let dirContent = '<a href="/">Home</a>';
-  if (id) findDocID(docList, id);
+  // if (id) findDocID(docList, id);
   const content =
     id === "Content"
       ? `<div class="intro">어서오세요</div>`
