@@ -2,6 +2,7 @@
 
 import {
   handleCreateDoc,
+  handleDeleteDoc,
   handleGetAllDocs,
   handleGetDocById,
 } from "./client.js";
@@ -9,35 +10,10 @@ import {
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
+const aEls = document.querySelectorAll(".sidebar-item-content a");
 
-// 전체 문서 트리를 렌더링하는 함수
-async function renderDocumentTree() {
-  sidebarItems.innerHTML = ""; // 기존 항목 초기화
-
-  const headersList = {
-    Accept: "*/*",
-    "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-    "x-username": "HW-5",
-  };
-
-  const response = await fetch("https://kdt-api.fe.dev-cos.com/documents", {
-    method: "GET",
-    headers: headersList,
-  });
-
-  const documents = await response.json();
-  console.log(documents);
-
-  // 최상위 문서부터 트리 구조로 사이드바에 추가
-  documents.forEach((doc) => {
-    if (!doc.parent) {
-      addDoc(doc, sidebarItems, documents);
-    }
-  });
-}
-
-// 문서를 트리에 추가하는 함수 (재귀적으로 하위 문서 처리)
-function addDoc(doc, parentElement, allDocuments) {
+async function addDoc(doc) {
+  // 문서 객체 생성
   const li = document.createElement("li");
   li.classList.add("sidebar-item");
 
@@ -60,8 +36,6 @@ function addDoc(doc, parentElement, allDocuments) {
   btnRemove.classList.add("sidebar-item-remove");
   btnRemove.textContent = "-";
 
-  const subDocItems = document.createElement("ul");
-
   divBtns.appendChild(btnAdd);
   divBtns.appendChild(btnRemove);
 
@@ -69,24 +43,29 @@ function addDoc(doc, parentElement, allDocuments) {
   divContent.appendChild(divBtns);
 
   li.appendChild(divContent);
-  li.appendChild(subDocItems);
-  parentElement.appendChild(li);
+  sidebarItems.appendChild(li);
 
-  // 링크 클릭 시 페이지 로드
+  // 링크 클릭 시 새로운 페이지 로드 처리
   a.addEventListener("click", (e) => {
     e.preventDefault();
     const id = e.currentTarget.dataset.url;
     history.pushState({ page: id }, "", `/documents/${id}`);
     loadTextEditor(id);
   });
-
-  // 재귀적으로 하위 문서 추가
-  allDocuments
-    .filter((childDoc) => childDoc.parent === doc.id)
-    .forEach((childDoc) => addDoc(childDoc, subDocItems, allDocuments));
 }
 
-// URL에 맞는 콘텐츠 로드
+// 링크 클릭 시 이벤트 핸들러
+// aEls.forEach((aEl) =>
+//   aEl.addEventListener("click", function (e) {
+//     e.preventDefault();
+
+//     const id = e.currentTarget.dataset.url;
+//     history.pushState({ page: id }, "", `/documents/${id}`);
+//     loadTextEditor(id);
+//   })
+// );
+
+// URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
 function loadTextEditor(id) {
   const content = id
     ? `
@@ -101,64 +80,60 @@ function loadTextEditor(id) {
 // 뒤로 가기/앞으로 가기 시 페이지 로드 처리
 window.addEventListener("popstate", function (event) {
   const id = event.state?.page || "Content";
-  loadTextEditor(id);
+  loadTextEditor(id); // ID값에 맞는 콘텐츠 로드
 });
 
-// 부모 문서 추가 버튼 처리
+// 부모 문서 추가 (문서 추가 시 사이드바에 표시)
 addDocBtn.addEventListener("click", async () => {
-  const headersList = {
+  const data = await handleCreateDoc(
+    JSON.stringify({ title: "새 페이지", parent: null })
+  );
+  addDoc(data);
+});
+
+// 페이지 로드 시 문서들을 가져오는 코드
+window.onload = async function () {
+  let headersList = {
     Accept: "*/*",
     "User-Agent": "Thunder Client (https://www.thunderclient.com)",
     "x-username": "HW-5",
-    "Content-Type": "application/json",
   };
 
-  const bodyContent = JSON.stringify({
-    title: "새 페이지",
-    parent: null,
-  });
-
-  // 문서 생성 요청
-  await fetch("https://kdt-api.fe.dev-cos.com/documents", {
-    method: "POST",
-    body: bodyContent,
+  const response = await fetch("https://kdt-api.fe.dev-cos.com/documents", {
+    method: "GET",
     headers: headersList,
   });
 
-  // 전체 문서 목록을 다시 불러와 트리 갱신
-  renderDocumentTree();
-});
+  const documents = await response.json();
 
-// 페이지 로드 시 문서 트리 초기화
-window.onload = renderDocumentTree;
+  // 문서 데이터 가져오기 및 사이드바에 추가
+  documents.forEach((doc) => {
+    addDoc(doc);
+  });
+};
 
-// 하위 문서 추가 버튼 처리 (이벤트 위임 사용)
+// 하위 문서 추가 ( li,button 태그가 동적으로 생성되서 이벤트 할당이 안되는 issue) 및 문서 삭제
 sidebarItems.addEventListener("click", async (e) => {
+  const parentId = e.target.parentElement.previousSibling.dataset.url;
   if (e.target.classList.contains("sidebar-item-add")) {
-    const subDocItems = e.target.closest(".sidebar-item").querySelector("ul");
-    const parentId = e.target.closest(".sidebar-item").querySelector("a")
-      .dataset.url;
-
-    const headersList = {
+    let headersList = {
       Accept: "*/*",
       "User-Agent": "Thunder Client (https://www.thunderclient.com)",
       "x-username": "HW-5",
       "Content-Type": "application/json",
     };
 
-    const bodyContent = JSON.stringify({
+    let bodyContent = JSON.stringify({
       title: "하위 페이지",
       parent: parentId,
     });
 
-    // 하위 문서 생성 요청
-    await fetch("https://kdt-api.fe.dev-cos.com/documents", {
+    let response = await fetch("https://kdt-api.fe.dev-cos.com/documents", {
       method: "POST",
       body: bodyContent,
       headers: headersList,
     });
-
-    // 전체 문서 목록을 다시 불러와 트리 갱신
-    renderDocumentTree();
+  } else if (e.target.classList.contains("sidebar-item-remove")) {
+    const data = await handleDeleteDoc(parentId);
   }
 });
