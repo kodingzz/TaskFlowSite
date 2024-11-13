@@ -4,7 +4,9 @@ import {
   handleCreateDoc,
   handleDeleteDoc,
   handleGetAllDocs,
+  handleGetDocById,
 } from "./client.js";
+
 import { loadEditorScript } from "./utils.js";
 
 const EDITOR_TEMP = ` <div class="editor-content">
@@ -23,10 +25,12 @@ const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
 
+let docList = [];
 async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
-  // docList = documents;
+  docList = documents;
+
   documents.forEach((doc) => {
     addDoc(doc);
   });
@@ -95,25 +99,44 @@ async function addDoc(doc) {
   sidebarItems.appendChild(makeItem(doc));
 }
 
-function findDocID(list, id) {
-  for (const doc of list) {
-    if (doc.id === id) {
-      console.log(doc);
-    }
-    if (doc.documents.length > 0) {
-      const result = findDocID(doc.documents, id);
-      if (result) {
-        console.log(result);
-      }
-    }
+// 현재 문서에서부터 최상위 문서까지 루트 찾기
+async function pathfromRoot(docId, docList) {
+  const path = [];
+  let currentDoc = await handleGetDocById(docId);
+
+  // 최상위 문서 도달할때까지 반복
+  while (currentDoc) {
+    path.unshift(currentDoc);
+    currentDoc = findParentDoc(currentDoc.id, docList);
   }
+
+  return path;
+}
+
+// 재귀적으로 부모 문서 찾기
+function findParentDoc(childId, docs) {
+  for (const doc of docs) {
+    if (doc.documents.some((subDoc) => subDoc.id === childId)) {
+      return doc;
+    }
+    // 하위문서 더 있는 경우
+    const parentDoc = findParentDoc(childId, doc.documents);
+    if (parentDoc) return parentDoc;
+  }
+  return null;
 }
 
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
-function loadTextEditor(id) {
-  console.log(id);
-  let dirContent = '<a href="/">Home</a>'; // <span>/</span><a href="/documents/139943">새 페이지</a>
-  // if (id) findDocID(docList, id);
+async function loadTextEditor(id) {
+  let dirContent = '<a href="/">Home</a>';
+  let paths = [];
+  if (id) {
+    paths = await pathfromRoot(id, docList);
+  }
+  paths.forEach((item) => {
+    dirContent += `<span>/</span><a href="/documents/${item.id}" data-url="${item.id}">${item.title}</a>`;
+  });
+
   const content =
     id === "Content"
       ? `
@@ -130,6 +153,12 @@ function loadTextEditor(id) {
   `
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   editor.innerHTML = content;
+
+  document.querySelector(".editor-dir").addEventListener("click", (e) => {
+    e.preventDefault();
+    const id = e.target.dataset.url;
+    history.pushState({ page: id }, "", `/documents/${id}`);
+  });
   loadEditorScript();
 }
 
