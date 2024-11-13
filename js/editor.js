@@ -78,6 +78,7 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
       const parentEl =
         currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
       deleteListItem(parentEl);
+      setCaretToEnd(currentBlock.previousElementSibling.lastChild);
     }
   }
 
@@ -114,13 +115,13 @@ document.querySelector("#editor").addEventListener("input", function (e) {
     if (e.data === " ") {
       if (textContent.startsWith("###") && textContent.length >= 4) {
         // '### ' -> h3
-        convertToHeaderBlock(currentBlock, "h5", 4);
+        convertToHeaderBlock(currentBlock, "h4", 4);
       } else if (textContent.startsWith("##") && textContent.length >= 3) {
         // '## ' -> h2
-        convertToHeaderBlock(currentBlock, "h4", 3);
+        convertToHeaderBlock(currentBlock, "h3", 3);
       } else if (textContent.startsWith("#") && textContent.length >= 2) {
         // '# ' -> h1
-        convertToHeaderBlock(currentBlock, "h3", 2);
+        convertToHeaderBlock(currentBlock, "h2", 2);
       } else if (/^\d+\./.test(textContent.trim())) {
         // Ordered list 처리 (숫자 목록 처리)
         createNewOlItem(currentBlock); // createNewOlItem로 변경
