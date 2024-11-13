@@ -35,6 +35,11 @@ window.addEventListener("load", function () {
 
 // 텍스트 에디터
 
+// 이전 블록이 ul 또는 ol인지 확인하는 함수
+function isPreviousBlockList(block) {
+  return block && (block.tagName === "UL" || block.tagName === "OL");
+}
+
 // default 텍스트 블록에 대한 키보드 입력 처리
 // Enter 키를 누를 때 동작
 document.querySelector("#editor").addEventListener("keydown", function (e) {
@@ -56,21 +61,42 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
     }
   }
 
-  // Handle Delete/Backspace keys
+  function isPreviousBlockList(block) {
+    return block && (block.tagName === "UL" || block.tagName === "OL");
+  }
+  // Delete/Backspace
   if (e.key === "Delete" || e.key === "Backspace") {
     // 1. 기본 div 블록이 비어있고 삭제되었을 때, 이전 블록으로 이동.
-    if (
-      currentBlock.tagName === "DIV" &&
-      currentBlock.textContent.trim() === "" &&
-      currentBlock.previousElementSibling
-    ) {
-      const previousBlock = currentBlock.previousElementSibling;
-      currentBlock.remove(); // 현재 빈 div 블록 삭제
-      previousBlock.focus(); // 이전 블록으로 포커스 이동
-      setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
-    }
+    const previousBlock = currentBlock.previousElementSibling;
 
-    // 2. li 블록이 비어있고 삭제되었을 때, 기본 블록으로 바뀌는 처리
+    document.querySelector("#editor").addEventListener("keydown", function (e) {
+      const currentBlock = document.activeElement;
+
+      // Delete 키가 눌렸을 때
+      if (
+        currentBlock.tagName === "DIV" &&
+        currentBlock.textContent.trim() === ""
+      ) {
+        currentBlock.remove(); // 현재 빈 div 블록 삭제
+        previousBlock.focus(); // 이전 블록으로 포커스 이동
+        setCaretToEnd(previousBlock); // 이전 블록의 끝으로 커서 이동
+
+        if (isPreviousBlockList(previousBlock)) {
+          e.preventDefault(); // 기본 동작 방지
+          currentBlock.remove(); // 현재 빈 div 블록 삭제
+
+          // 이전 ul/ol의 마지막 자식 요소를 찾고 포커스 이동
+          const lastChild = previousBlock.lastElementChild;
+          if (lastChild) {
+            lastChild.focus(); // 마지막 li에 포커스 이동
+            setCaretToEnd(lastChild); // 마지막 글자 뒤로 커서 이동
+          }
+        }
+      }
+    });
+
+    // 2. ul/ol 블록이 비어있고 삭제되었을 때, 기본 블록으로 바뀌는 처리
+
     if (
       currentBlock.tagName === "LI" &&
       currentBlock.textContent.trim() === ""
@@ -78,7 +104,6 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
       const parentEl =
         currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
       deleteListItem(parentEl);
-      setCaretToEnd(currentBlock.previousElementSibling.lastChild);
     }
   }
 
