@@ -71,7 +71,6 @@
   min-height: 50px;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 .sidebar-item-content {
   width: 100%;
@@ -82,6 +81,8 @@
 }
 .sidebar-item-content a {
   flex: 1;
+  display: flex;
+  align-items: center;
 }
 .sidebar-item-btns {
   display: flex;
