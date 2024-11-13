@@ -1,5 +1,6 @@
 const BASE_URL = "https://kdt-api.fe.dev-cos.com/documents";
-const USER_NAME = "CN-4";
+// const USER_NAME = "CN-4";
+const USER_NAME = "HW-5";
 
 const handleFetch = async (endPoint = "", options) => {
   const fetchOpts = {
@@ -9,7 +10,7 @@ const handleFetch = async (endPoint = "", options) => {
     },
     ...options,
   };
-  return await fetch(`${BASE_URL}${endPoint}`, fetchOpts)
+  return await fetch(`${BASE_URL}/${endPoint}`, fetchOpts)
     .then((res) => res.json())
     .catch((err) => new Error(`에러 발생: ${err}`));
 };
@@ -21,8 +22,8 @@ const handleGetAllDocs = async () => await handleFetch();
 const handleGetDocById = async (id) => await handleFetch(id);
 
 //** POST */
-const handleCreateDoc = async (id, body) =>
-  await handleFetch(id, { method: "POST", body });
+const handleCreateDoc = async (body) =>
+  await handleFetch("", { method: "POST", body });
 
 //** PUT */
 const handleUpdateDoc = async (id, body) =>
