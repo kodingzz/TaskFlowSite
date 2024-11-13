@@ -7,16 +7,26 @@ import {
   handleGetDocById,
 } from "./client.js";
 
+const EDITOR_TEMP = ` <div class="editor-content">
+<h2 id="title-display"></h2>
+<div class="title-container">
+  <textarea
+    id="title-input"
+    class="title-input"
+    placeholder="제목"
+  ></textarea>
+</div>
+<div class="text-block" contenteditable="true"></div>
+</div>`;
+
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
 const editor = document.querySelector("#editor");
 
-let docList = [];
-
 async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
-  docList = documents;
+
   documents.forEach((doc) => {
     addDoc(doc);
   });
@@ -82,47 +92,32 @@ async function addDoc(doc) {
 
 function findDocID(list, id) {
   for (const doc of list) {
-    if (doc.id === Number(id)) {
-      console.log(1, doc.id, Number(id));
-      return doc;
+    if (doc.id === id) {
+      console.log(doc);
     }
     if (doc.documents.length > 0) {
       const result = findDocID(doc.documents, id);
-      console.log(2, doc.id, Number(id), result);
-      if (result) return doc;
+      if (result) {
+        console.log(result);
+      }
     }
   }
-  return "";
 }
 
 // URL에 맞는 콘텐츠 로드 (동적으로 콘텐츠를 로드하는 함수)
 function loadTextEditor(id) {
+  console.log(id);
   let dirContent = '<a href="/">Home</a>';
-  // if (id) dirContent += findDocID(docList, id).title;
+  if (id) findDocID(docList, id);
   const content =
     id === "Content"
-      ? `
-      <div class="editor-top">
-      <div class="editor-dir">${dirContent}</div>
-    </div>
-      <div class="intro">어서오세요</div>`
+      ? `<div class="intro">어서오세요</div>`
       : id
       ? `
     <div class="editor-top">
-    <div class="editor-dir">${dirContent}</div>
+    <div class="editor-dir">root1 </div>
   </div>
-  <div class="editor-content">
-    <h2 id="title-display"></h2>
-    <div class="title-container">
-      <textarea
-        id="title-input"
-        class="title-input"
-        placeholder="제목"
-      ></textarea>
-    </div>
-    <div id="output"></div>
-    <div class="text-block" contenteditable="true"></div>
-  </div>
+ ${EDITOR_TEMP}
   `
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   editor.innerHTML = content;
