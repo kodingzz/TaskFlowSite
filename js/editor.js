@@ -1,26 +1,28 @@
 // 타이틀 에디터
 const titleDisplay = document.getElementById("title-display");
 const titleInput = document.getElementById("title-input");
+
 function saveTitle() {
   const title = titleInput.value.trim();
   if (title) {
     titleDisplay.textContent = title;
-    titleInput.style.visibility = "hidden";
+    titleInput.style.display = "none";
     titleDisplay.style.display = "block";
   }
 }
 function editTitle() {
-  titleInput.style.visibility = "visible";
+  titleInput.style.display = "block";
   titleDisplay.style.display = "none";
   titleInput.value = titleDisplay.textContent.trim();
 }
 
 titleInput.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
-    e.preventDefault();
-    saveTitle();
+    e.preventDefault(); // Enter 키로 줄 바꿈 방지
+    saveTitle(); // 제목 저장
   }
 });
+
 titleDisplay.addEventListener("click", function () {
   editTitle();
 });
