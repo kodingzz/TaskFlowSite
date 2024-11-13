@@ -19,11 +19,10 @@ async function loadSidebarDocs() {
   // 모든 문서를 가져와 사이드바에 추가
 
   const documents = await handleGetAllDocs();
+  console.log(doc);
 
   // 문서를 순회하며 사이드바에 추가
   documents.forEach((doc) => {
-    console.log(doc);
-
     addDoc(doc);
   });
 }
