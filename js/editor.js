@@ -1,10 +1,6 @@
 // 타이틀 에디터
 const titleDisplay = document.getElementById("title-display");
 const titleInput = document.getElementById("title-input");
-<<<<<<< HEAD
-
-=======
->>>>>>> 7f8be6291a3b0b5ad2a398cd1e15f4ec192b6d76
 function saveTitle() {
   const title = titleInput.value.trim();
   if (title) {
@@ -176,29 +172,10 @@ document.querySelector("#editor").addEventListener("input", function (e) {
       ) {
         // Unordered list 처리
         createNewUlItem(currentBlock);
+      } else if (/^-{3,}$/.test(textContent.trim())) {
+        createDivider(currentBlock); // 구분선 처리
       }
     }
-<<<<<<< HEAD
-    // 다른 마크다운 처리
-    else if (textContent.startsWith("> ")) {
-      createBlockquote(currentBlock); // Blockquote 처리
-    } else if (
-      textContent.startsWith("* ") ||
-      textContent.startsWith("- ") ||
-      textContent.startsWith("+ ")
-    ) {
-      createListItem(currentBlock); // Unordered list 처리
-    } else if (/^\d+\./.test(textContent.trim())) {
-      createOrderedListItem(currentBlock); // Ordered list 처리
-    } else if (textContent.startsWith("**") && textContent.endsWith("**")) {
-      createBoldText(currentBlock); // Bold 처리
-    } else if (textContent.startsWith("*") && textContent.endsWith("*")) {
-      createItalicText(currentBlock); // Italic 처리
-    } else if (/^-{3,}$/.test(textContent.trim())) {
-      createDivider(currentBlock); // 구분선 처리
-    }
-=======
->>>>>>> 7f8be6291a3b0b5ad2a398cd1e15f4ec192b6d76
   }
 });
 
@@ -250,26 +227,10 @@ function createNewUlItem(block) {
   newListItem.focus();
 }
 
-<<<<<<< HEAD
-function createDivider(block) {
-  const hr = document.createElement("hr");
-  hr.classList.add("text-block");
-
-  block.replaceWith(hr);
-  hr.focus();
-}
-
-function createListItem(block) {
-  // 현재 텍스트 블록이 리스트 항목이면, 새로운 항목을 추가합니다.
-  const listItem = document.createElement("li");
-  listItem.textContent = block.textContent.trim().slice(2);
-  const ul = block.closest("ul") || document.createElement("ul");
-=======
 function createNewOlItem(block) {
   // <ol> 태그를 생성하고 <li> 항목을 추가
   const newListhead = document.createElement("ol");
   const newListItem = document.createElement("li");
->>>>>>> 7f8be6291a3b0b5ad2a398cd1e15f4ec192b6d76
 
   // <ol> 안에 새로운 <li> 항목 추가
   newListhead.appendChild(newListItem);
@@ -287,5 +248,9 @@ function createNewOlItem(block) {
   newListItem.contentEditable = "true";
   newListItem.focus();
 }
-
-//
+function createDivider(block) {
+  const hr = document.createElement("hr");
+  hr.classList.add("text-block");
+  block.replaceWith(hr);
+  hr.focus();
+}
