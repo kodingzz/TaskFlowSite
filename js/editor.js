@@ -189,7 +189,7 @@ document.getElementById("editor").addEventListener("input", function (e) {
     } else if (textContent.startsWith("*") && textContent.endsWith("*")) {
       createItalicText(currentBlock); // Italic 처리
     } else if (/^-{3,}$/.test(textContent.trim())) {
-      createDivider(currentBlock); // --- 또는 --- 등 구분선
+      createDivider(currentBlock); // 구분선 처리
     }
   }
 });
@@ -220,8 +220,8 @@ function createDivider(block) {
   const hr = document.createElement("hr");
   hr.classList.add("text-block");
 
-  block.replaceWith(hr); // 기존 블록을 <hr>로 대체
-  hr.focus(); // 구분선에 포커스
+  block.replaceWith(hr);
+  hr.focus();
 }
 
 function createListItem(block) {
