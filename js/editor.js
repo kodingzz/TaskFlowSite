@@ -16,7 +16,7 @@ function editTitle() {
 }
 
 titleInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
+  if (e.key === "Enter" || "Tab") {
     e.preventDefault();
     saveTitle();
   }
@@ -152,8 +152,8 @@ document.querySelector("#editor").addEventListener("input", function (e) {
         // '# ' -> h1
         convertToHeaderBlock(currentBlock, "h3", 2);
       } else if (/^\d+\./.test(textContent.trim())) {
-        // Ordered list 처리
-        createNewUlItem(currentBlock);
+        // Ordered list 처리 (숫자 목록 처리)
+        createNewOlItem(currentBlock); // createNewOlItem로 변경
       } else if (
         textContent.startsWith("*") ||
         textContent.startsWith("-") ||
