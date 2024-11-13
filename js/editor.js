@@ -18,6 +18,7 @@ function editTitle() {
   titleDisplay.style.display = "none";
   titleInput.value = titleDisplay.textContent.trim();
 }
+
 titleInput.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
     e.preventDefault();
