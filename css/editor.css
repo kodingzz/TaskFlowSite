@@ -48,8 +48,8 @@ input.title-input {
   background: transparent;
   color: white;
   font-weight: bold;
-  font-size: 25px;
-  margin-bottom: 8px;
+  font-size: 32px;
+  margin-bottom: 2rem;
 }
 input.title-input::placeholder {
   color: #525252;
