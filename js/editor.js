@@ -1,3 +1,5 @@
+import { handleUpdateDoc } from "./client.js";
+import { loadSidebarDocs, makePathDir } from "./utils.js";
 // 텍스트 에디터
 
 // 이전 블록이 ul 또는 ol인지 확인하는 함수
@@ -7,20 +9,27 @@ function isPreviousBlockList(block) {
 
 // default 텍스트 블록에 대한 키보드 입력 처리
 // Enter 키를 누를 때 동작
+let isComposing = true;
+
+document.querySelector("#editor").addEventListener("compositionstart", () => {
+  isComposing = false;
+});
+document.querySelector("#editor").addEventListener("compositionend", () => {
+  isComposing = true;
+});
 document.querySelector("#editor").addEventListener("keydown", function (e) {
   const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
   const titleInput = document.getElementById("title-input");
-  console.log(titleInput);
 
   // Enter 키가 눌렸을 때
-  if (e.key === "Enter") {
-    e.preventDefault(); // 기본 Enter 동작을 막음
+  if (isComposing && e.key === "Enter") {
+    e.preventDefault();
 
     // 현재 포커스가 Text input일 때
     if (currentBlock === titleInput) {
       createNewFirstBlock();
-      newTextBlock.focus();
     }
+
     // 현재 블록이 text-block일 경우, 새 블록을 생성
     if (currentBlock.classList.contains("text-block")) {
       createNewBlock(currentBlock);
@@ -104,41 +113,66 @@ function setCaretToEnd(element) {
   selection.removeAllRanges();
   selection.addRange(range);
 }
-
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
 // 텍스트 입력 처리시 반응하는 이벤트 리스너
-document.querySelector("#editor").addEventListener("input", function (e) {
-  const currentBlock = document.activeElement;
-  console.log(e.data);
+document.querySelector("#editor").addEventListener(
+  "input",
+  debounce(async function (e) {
+    const currentBlock = document.activeElement;
+    const titleInput = document.getElementById("title-input");
+    const pathname = window.location.pathname;
+    const id = pathname.split("/").pop();
 
-  // 텍스트 블록 내에서만 처리
-  if (currentBlock && currentBlock.classList.contains("text-block")) {
-    const textContent = currentBlock.textContent;
+    if (e.target === titleInput) {
+      await handleUpdateDoc(
+        id,
+        JSON.stringify({ title: e.target.value.trim() })
+      )
+        .then(loadSidebarDocs)
+        .then(() => makePathDir(id));
+    } else if (e.target.parentElement) {
+      await handleUpdateDoc(
+        id,
+        JSON.stringify({ content: e.target.parentElement.innerHTML.trim() })
+      );
+    }
 
-    // Markdown 인식 (트리거 인식)
-    if (e.data === " ") {
-      if (textContent.startsWith("###") && textContent.length >= 4) {
-        // '### ' -> h3
-        convertToHeaderBlock(currentBlock, "h4", 4);
-      } else if (textContent.startsWith("##") && textContent.length >= 3) {
-        // '## ' -> h2
-        convertToHeaderBlock(currentBlock, "h3", 3);
-      } else if (textContent.startsWith("#") && textContent.length >= 2) {
-        // '# ' -> h1
-        convertToHeaderBlock(currentBlock, "h2", 2);
-      } else if (/^\d+\./.test(textContent.trim())) {
-        // Ordered list 처리 (숫자 목록 처리)
-        createNewOlItem(currentBlock); // createNewOlItem로 변경
-      } else if (
-        textContent.startsWith("*") ||
-        textContent.startsWith("-") ||
-        textContent.startsWith("+")
-      ) {
-        // Unordered list 처리
-        createNewUlItem(currentBlock);
+    // 텍스트 블록 내에서만 처리
+    if (currentBlock && currentBlock.classList.contains("text-block")) {
+      const textContent = currentBlock.textContent;
+
+      // Markdown 인식 (트리거 인식)
+      if (e.data === " ") {
+        if (textContent.startsWith("###") && textContent.length >= 4) {
+          // '### ' -> h3
+          convertToHeaderBlock(currentBlock, "h4", 4);
+        } else if (textContent.startsWith("##") && textContent.length >= 3) {
+          // '## ' -> h2
+          convertToHeaderBlock(currentBlock, "h3", 3);
+        } else if (textContent.startsWith("#") && textContent.length >= 2) {
+          // '# ' -> h1
+          convertToHeaderBlock(currentBlock, "h2", 2);
+        } else if (/^\d+\./.test(textContent.trim())) {
+          // Ordered list 처리 (숫자 목록 처리)
+          createNewOlItem(currentBlock); // createNewOlItem로 변경
+        } else if (
+          textContent.startsWith("*") ||
+          textContent.startsWith("-") ||
+          textContent.startsWith("+")
+        ) {
+          // Unordered list 처리
+          createNewUlItem(currentBlock);
+        }
       }
     }
-  }
-});
+  }, 100)
+);
 
 // 새로운 텍스트 블록 생성 함수
 function createNewFirstBlock() {
