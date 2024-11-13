@@ -97,7 +97,6 @@ export async function makePath(id) {
 }
 
 export async function makePathDir(id) {
-  console.log(id);
   const dir = document.querySelector(".editor-dir");
   if (dir) dir.innerHTML = await makePath(id);
 }
@@ -106,7 +105,6 @@ export async function makePathDir(id) {
 export async function loadTextEditor(id) {
   const dirContent = await makePath(id);
   let data = id !== "Content" && (await handleGetDocById(id));
-  console.log(data);
   const EDITOR_TEMP = `<div class="editor-content">
   <input
     id="title-input"

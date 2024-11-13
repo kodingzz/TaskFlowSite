@@ -9,16 +9,26 @@ function isPreviousBlockList(block) {
 
 // default 텍스트 블록에 대한 키보드 입력 처리
 // Enter 키를 누를 때 동작
+let isComposing = true;
+
+document.querySelector("#editor").addEventListener("compositionstart", () => {
+  isComposing = false;
+});
+document.querySelector("#editor").addEventListener("compositionend", () => {
+  isComposing = true;
+});
 document.querySelector("#editor").addEventListener("keydown", function (e) {
   const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
   const titleInput = document.getElementById("title-input");
 
   // Enter 키가 눌렸을 때
-  if (e.key === "Enter") {
-    e.preventDefault(); // 기본 Enter 동작을 막음
+  if (isComposing && e.key === "Enter") {
+    e.preventDefault();
 
     // 현재 포커스가 Text input일 때
-    if (currentBlock === titleInput) createNewFirstBlock();
+    if (currentBlock === titleInput) {
+      createNewFirstBlock();
+    }
 
     // 현재 블록이 text-block일 경우, 새 블록을 생성
     if (currentBlock.classList.contains("text-block")) {
@@ -126,7 +136,7 @@ document.querySelector("#editor").addEventListener(
       )
         .then(loadSidebarDocs)
         .then(() => makePathDir(id));
-    } else {
+    } else if (e.target.parentElement) {
       await handleUpdateDoc(
         id,
         JSON.stringify({ content: e.target.parentElement.innerHTML.trim() })
@@ -161,7 +171,7 @@ document.querySelector("#editor").addEventListener(
         }
       }
     }
-  }, 300)
+  }, 100)
 );
 
 // 새로운 텍스트 블록 생성 함수
