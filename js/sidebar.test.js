@@ -114,13 +114,6 @@ function loadTextEditor(id) {
   let dirContent = '<a href="/">Home</a>';
   //<span>/</span><a href="/documents/139943">새 페이지</a>
 
-  // let path = findDocID(docList, id);
-  // if (id) {
-  //   dirContent += path
-  //     .forEach((id) => `<span>/</span><a href="/${id}/>${id.title}</a>`)
-  //     .join("");
-  // }
-
   const content =
     id === "Content"
       ? `
