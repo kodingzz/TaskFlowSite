@@ -5,6 +5,7 @@ import {
   handleDeleteDoc,
   handleGetAllDocs,
 } from "./client.js";
+import { loadEditorScript } from "./utils.js";
 
 const EDITOR_TEMP = ` <div class="editor-content">
 <h2 id="title-display"></h2>
@@ -129,6 +130,7 @@ function loadTextEditor(id) {
   `
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   editor.innerHTML = content;
+  loadEditorScript();
 }
 
 // 뒤로 가기/앞으로 가기 시 페이지 로드 처리
