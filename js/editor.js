@@ -36,22 +36,22 @@ document
       }
     }
 
-    // Delete/Backspace 키 처리
-    if (e.key === "Delete" || e.key === "Backspace") {
+    // 현재 블록 빈블록일 때 Delete/Backspace 처리
+    if (
+      (e.key === "Delete" || e.key === "Backspace") &&
+      currentBlock.textContent.trim() === ""
+    ) {
       const previousBlock = currentBlock.previousElementSibling;
 
-      // 1.
+      // 1. 첫번째 텍스트 블록일 때
 
       if (!previousBlock.classList.contains("text-block")) {
         e.preventDefault();
         currentBlock.focus();
         setCaretToEnd(currentBlock);
       }
-
-      if (
-        currentBlock.tagName === "DIV" &&
-        currentBlock.textContent.trim() === ""
-      ) {
+      // 2.현재 블록이 기본 블록일 때
+      if (currentBlock.tagName === "DIV") {
         if (isPreviousBlockList(previousBlock)) {
           e.preventDefault(); // 기본 동작 방지
           currentBlock.remove(); // 현재 빈 div 블록 삭제
