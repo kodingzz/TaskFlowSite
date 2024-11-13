@@ -1,36 +1,14 @@
-const titleDisplay = document.getElementById("title-display");
-const titleInput = document.getElementById("title-input");
+let titleInput = document.getElementById("title-input");
 
-function saveTitle() {
-  const title = titleInput.value.trim();
-  if (title) {
-    titleDisplay.textContent = title;
-    titleInput.style.display = "none"; // Hide textarea
-    titleDisplay.style.display = "block"; // Show titleDisplay (h2)
+
+titleInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    const newTitle = titleInput.value.trim();
+    if (newTitle) {
+      return newTitle;
+      
+    }
   }
-}
-
-function editTitle() {
-  titleInput.style.display = "block"; // Show textarea
-  titleDisplay.style.display = "none"; // Hide titleDisplay (h2)
-  titleInput.value = titleDisplay.textContent.trim(); // Set textarea value from h2 content
-}
-
-titleInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter" || e.key === "Tab") {
-    e.preventDefault();
-    saveTitle();
-  }
-});
-
-titleDisplay.addEventListener("click", function () {
-  editTitle();
-});
-
-// 페이지 로딩 시, titleInput 숨기고 titleDisplay만 보여주기
-window.addEventListener("load", function () {
-  titleInput.style.display = "none";
-  titleDisplay.style.display = "block";
 });
 
 // 텍스트 에디터
@@ -78,6 +56,7 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
       const parentEl =
         currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
       deleteListItem(parentEl);
+      setCaretToEnd(currentBlock.previousElementSibling.lastChild);
     }
   }
 
@@ -114,13 +93,13 @@ document.querySelector("#editor").addEventListener("input", function (e) {
     if (e.data === " ") {
       if (textContent.startsWith("###") && textContent.length >= 4) {
         // '### ' -> h3
-        convertToHeaderBlock(currentBlock, "h5", 4);
+        convertToHeaderBlock(currentBlock, "h4", 4);
       } else if (textContent.startsWith("##") && textContent.length >= 3) {
         // '## ' -> h2
-        convertToHeaderBlock(currentBlock, "h4", 3);
+        convertToHeaderBlock(currentBlock, "h3", 3);
       } else if (textContent.startsWith("#") && textContent.length >= 2) {
         // '# ' -> h1
-        convertToHeaderBlock(currentBlock, "h3", 2);
+        convertToHeaderBlock(currentBlock, "h2", 2);
       } else if (/^\d+\./.test(textContent.trim())) {
         // Ordered list 처리 (숫자 목록 처리)
         createNewOlItem(currentBlock); // createNewOlItem로 변경
