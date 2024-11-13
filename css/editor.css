@@ -19,7 +19,7 @@ textarea.title-input {
   background: transparent;
   color: #525252;
   font-size: 25px;
-  padding-top: 25px;
+  /*padding-top: 25px;*/
 }
 
 textarea.title-input::placeholder {
@@ -30,7 +30,7 @@ textarea.title-input::placeholder {
 .title-display {
   width: 100%;
   font-weight: bold;
-  margin-top: 20px;
+  /*margin-top: 20px;*/
 }
 
 .hr {

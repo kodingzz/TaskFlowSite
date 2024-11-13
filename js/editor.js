@@ -87,6 +87,17 @@ document.getElementById("editor").addEventListener("keydown", function (e) {
       );
       newBasicBlock.focus();
     }
+    {
+      // 구분선에서
+      const newNextBlock = document.createElement("div");
+      newNextBlock.classList.add("text-block");
+      newNextBlock.contentEditable = "true";
+      currentBlock.parentNode.insertBefore(
+        newNextBlock,
+        currentBlock.nextSibling
+      );
+      newNextBlock.focus();
+    }
   }
 
   // Delete 키를 눌렀을 때
