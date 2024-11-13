@@ -130,6 +130,7 @@ section#editor {
   background-color: var(--main-dark-gray);
   padding: 1rem;
   display: flex;
+  gap: 4px;
   align-items: center;
   gap: 0.5rem;
   font-size: 1.125rem;
