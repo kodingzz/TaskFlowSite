@@ -92,7 +92,6 @@
   width: 32px;
   height: 32px;
 }
-
 .sidebar-bottom {
   width: 100%;
   display: flex;
@@ -100,13 +99,11 @@
   align-items: center;
   padding: 0.5rem;
 }
-
 .sidebar-add {
   width: 100%;
   height: 50px;
   font-size: 18px;
 }
-
 /* Editor */
 section#editor {
   width: 100%;
@@ -136,6 +133,9 @@ section#editor {
   align-items: center;
   gap: 0.5rem;
   font-size: 1.125rem;
+  position: sticky;
+  top: 0;
+  left: 0;
 }
 .editor-content {
   padding: 1rem;
