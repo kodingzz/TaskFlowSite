@@ -105,7 +105,6 @@ export async function makePathDir(id) {
 export async function loadTextEditor(id) {
   const dirContent = await makePath(id);
   let data = id !== "Content" && (await handleGetDocById(id));
-  console.log(data);
   const EDITOR_TEMP = `
   <div class="editor-content">
     <input
@@ -123,6 +122,14 @@ export async function loadTextEditor(id) {
     </div>
   </div>
 `;
+  // 하위 문서들
+  const subDocs = data.documents;
+  let subDocsLink = "";
+  console.log(subDocs);
+  subDocs.forEach((doc) => {
+    subDocsLink += `<a href="/documents/${doc.id}" data-url="${doc.id}">${doc.title}</a>`;
+  });
+
   const content =
     id === "Content"
       ? `
@@ -137,10 +144,19 @@ export async function loadTextEditor(id) {
       </div>
       ${EDITOR_TEMP}
       <div class="editor-bottom">
+       ${subDocsLink}
       </div>
   `
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   document.querySelector("#editor").innerHTML = content;
+
+  // 하위 링크들 클릭시 이동
+  document.querySelector(".editor-bottom").addEventListener("click", (e) => {
+    e.preventDefault();
+    const id = e.target.dataset.url;
+    history.pushState({ page: id }, "", `/documents/${id}`);
+    loadTextEditor(id);
+  });
 
   // 경로 읽기
   document.querySelector(".editor-dir").addEventListener("click", (e) => {
