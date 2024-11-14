@@ -59,18 +59,22 @@ const handleRemoveClick = async (parentId) => {
 
 // 메인 이벤트 리스너
 sidebarItems.addEventListener("click", async (e) => {
+  e.preventDefault();
   const target = e.target;
   const li = target.closest("li");
   const parentLink = li.querySelector("a");
   const parentId = parentLink ? parentLink.dataset.url : null;
 
   if (!parentId) return;
-
   if (target.classList.contains("sidebar-item-toggle")) {
     handleToggleClick(li, parentId);
   } else if (target.classList.contains("sidebar-item-add")) {
     await handleAddClick(parentId);
   } else if (target.classList.contains("sidebar-item-remove")) {
     await handleRemoveClick(parentId);
+  } else if (target.tagName === "A") {
+    const id = target.dataset.url;
+    history.pushState({ page: id }, "", `/documents/${id}`);
+    loadTextEditor(id);
   }
 });
