@@ -39,6 +39,7 @@ h4.text-block {
 }
 
 /* 편집 가능하게 스타일링 */
+.editor-content ul li[contenteditable="true"],
 .text-block[contenteditable="true"] {
   outline: none; /* 포커스시 기본 outline 제거 */
 }
