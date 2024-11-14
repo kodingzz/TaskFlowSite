@@ -154,13 +154,18 @@ document.querySelector("#editor").addEventListener(
       await handleUpdateDoc(
         id,
         JSON.stringify({ title: e.target.value.trim() })
-      )
-        .then(loadSidebarDocs)
-        .then(() => makePathDir(id));
-    } else if (e.target.parentElement) {
+      ).then(() => makePathDir(id));
+      const targetA = document.querySelector(`a[data-url="${id}"]`);
+      targetA.textContent = e.target.value.trim();
+    } else if (
+      e.target.parentElement &&
+      document.getElementById("text-container")
+    ) {
       await handleUpdateDoc(
         id,
-        JSON.stringify({ content: e.target.parentElement.innerHTML.trim() })
+        JSON.stringify({
+          content: document.getElementById("text-container").innerHTML.trim(),
+        })
       );
     }
 
