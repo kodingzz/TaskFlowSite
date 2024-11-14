@@ -12,6 +12,18 @@
   margin-bottom: 4px;
 }
 
+div.text-block {
+  font-size: 16px;
+}
+h2.text-block {
+  font-size: 28px;
+}
+h3.text-block {
+  font-size: 24px;
+}
+h4.text-block {
+  font-size: 20px;
+}
 /* text-block 안에 있는 <ul>과 <ol> 스타일 */
 .text-block ul,
 .text-block ol {
@@ -27,6 +39,8 @@
 }
 
 /* 편집 가능하게 스타일링 */
+.editor-content ol li[contenteditable="true"],
+.editor-content ul li[contenteditable="true"],
 .text-block[contenteditable="true"] {
   outline: none; /* 포커스시 기본 outline 제거 */
 }
@@ -48,7 +62,6 @@ input.title-input {
   outline: 0;
   resize: none;
   background: transparent;
-  color: white;
   font-weight: bold;
   font-size: 32px;
   margin-bottom: 2rem;
@@ -65,4 +78,26 @@ input.title-input::placeholder {
   margin: "20px 0";
   width: "100%";
   cursor: "text";
+}
+
+.editor-bottom {
+  width: 100%;
+  max-width: 1108px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  padding: 1rem;
+  gap: 8px;
+}
+
+.editor-bottom a {
+  background-color: var(--main-gray);
+  display: inline-block;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.editor-bottom a:hover {
+  transition: all 0.2s ease-in-out;
+  background-color: var(--main-light-gray);
 }

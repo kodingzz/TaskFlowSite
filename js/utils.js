@@ -37,11 +37,9 @@ function makeItem(doc, depth = 1) {
 
   const btnAdd = document.createElement("button");
   btnAdd.classList.add("sidebar-item-add");
-  btnAdd.textContent = "+";
 
   const btnRemove = document.createElement("button");
   btnRemove.classList.add("sidebar-item-remove");
-  btnRemove.textContent = "-";
 
   // depth가 3이상이면 추가버튼 x
   if (depth < 3) {
@@ -105,38 +103,65 @@ export async function makePathDir(id) {
 export async function loadTextEditor(id) {
   const dirContent = await makePath(id);
   let data = id !== "Content" && (await handleGetDocById(id));
-  const EDITOR_TEMP = `<div class="editor-content">
-  <input
-    id="title-input"
-    class="title-input"
-    placeholder="제목"
-    value="${data ? data.title : "제목없음"}"
-  />
-<div id="text-container">
-${
-  data && data.content !== null
-    ? data.content
-    : '<div class="text-block" contenteditable="true"></div>'
-}
-</div>
-</div>
+  const EDITOR_TEMP = `
+  <div class="editor-content">
+    <input
+      id="title-input"
+      class="title-input"
+      placeholder="제목"
+      value="${data ? data.title : "제목없음"}"
+    />
+    <div id="text-container">
+    ${
+      data && data.content !== null
+        ? data.content
+        : '<div class="text-block" contenteditable="true"></div>'
+    }
+    </div>
+  </div>
 `;
+  // 하위 문서들
+
+  const subDocs = data && data.documents;
+
+  let subDocsLink = "";
+  if (subDocs) {
+    subDocs.forEach((doc) => {
+      subDocsLink += `<a href="/documents/${doc.id}" data-url="${doc.id}">${doc.title}</a>`;
+    });
+  }
+
   const content =
     id === "Content"
       ? `
       <div class="editor-top">
-    <div class="editor-dir">${dirContent}</div>
-  </div>
+        <div class="editor-dir">${dirContent}</div>
+      </div>
       <div class="intro">Hello World</div>`
       : id
       ? `
-    <div class="editor-top">
-    <div class="editor-dir">${dirContent}</div>
-  </div>
- ${EDITOR_TEMP}
+      <div class="editor-top">
+        <div class="editor-dir">${dirContent}</div>
+      </div>
+      ${EDITOR_TEMP}
+      <div class="editor-bottom">
+       ${subDocsLink}
+      </div>
   `
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   document.querySelector("#editor").innerHTML = content;
+
+  // 하위 링크들 클릭시 이동
+  const editorBottom = document.querySelector(".editor-bottom");
+  editorBottom &&
+    editorBottom.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (e.target.tagName === "A") {
+        const id = e.target.dataset.url;
+        history.pushState({ page: id }, "", `/documents/${id}`);
+        loadTextEditor(id);
+      }
+    });
 
   // 경로 읽기
   document.querySelector(".editor-dir").addEventListener("click", (e) => {
@@ -207,5 +232,3 @@ function findParentDoc(childId, docs) {
   }
   return null;
 }
-
-//
