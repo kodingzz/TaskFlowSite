@@ -211,5 +211,3 @@ function findParentDoc(childId, docs) {
   }
   return null;
 }
-
-//
