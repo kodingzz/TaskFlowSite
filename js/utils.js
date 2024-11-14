@@ -1,22 +1,4 @@
 import { handleGetAllDocs, handleGetDocById } from "./client.js";
-<<<<<<< HEAD
-
-let docLists = await handleGetAllDocs();
-
-const EDITOR_TEMP = ` <div class="editor-content">
-<div class="title-container">
-  <input
-    id="title-input"
-    class="title-input"
-    placeholder="제목"
-  ></input>
-</div>
-<div id="text-container">
-<div class="text-block" contenteditable="true"></div>
-</div>
-</div>
-`;
-=======
 let docList = [];
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 
@@ -90,7 +72,6 @@ function makeItem(doc, depth = 1) {
   }
   return li;
 }
->>>>>>> dev.khw-test
 
 export function loadEditorScript() {
   const id = `editor-script`;
@@ -103,26 +84,15 @@ export function loadEditorScript() {
   }
 }
 
-<<<<<<< HEAD
-export async function loadTextEditor(id) {
-  let dirContent = '<a href="/">Home</a>';
-  let paths = [];
-  if (id && id !== "Content") {
-    paths = await pathfromRoot(id, docLists);
-=======
 export async function makePath(id) {
   let dirContent = '<a href="/">Home</a>';
   let paths = [];
   if (id && id !== "Content") {
     paths = await pathfromRoot(id, docList);
->>>>>>> dev.khw-test
   }
   paths.forEach((item) => {
     dirContent += `<span>/</span><a href="/documents/${item.id}" data-url="${item.id}">${item.title}</a>`;
   });
-<<<<<<< HEAD
-
-=======
   return dirContent;
 }
 
@@ -153,25 +123,10 @@ export async function loadTextEditor(id) {
     </div>
   </div>
 `;
->>>>>>> dev.khw-test
   const content =
     id === "Content"
       ? `
       <div class="editor-top">
-<<<<<<< HEAD
-    <div class="editor-dir">${dirContent}</div>
-  </div>
-      <div class="intro">Hello World</div>`
-      : id
-      ? `
-    <div class="editor-top">
-    <div class="editor-dir">${dirContent}</div>
-  </div>
- ${EDITOR_TEMP}
-  `
-      : "<h1>페이지를 찾을 수 없습니다.</h1>";
-  editor.innerHTML = content;
-=======
         <div class="editor-dir">${dirContent}</div>
       </div>
       <div class="intro">Hello World</div>`
@@ -186,18 +141,11 @@ export async function loadTextEditor(id) {
   `
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   document.querySelector("#editor").innerHTML = content;
->>>>>>> dev.khw-test
 
   // 경로 읽기
   document.querySelector(".editor-dir").addEventListener("click", (e) => {
     e.preventDefault();
-<<<<<<< HEAD
-
     const id = e.target.dataset.url;
-
-=======
-    const id = e.target.dataset.url;
->>>>>>> dev.khw-test
     if (!id) {
       history.pushState({ page: "/" }, "", `/`); // root로 이동
       loadTextEditor("Content");
@@ -208,13 +156,6 @@ export async function loadTextEditor(id) {
   });
   loadEditorScript();
   const isMenuClose = localStorage.getItem("isMenuClose");
-<<<<<<< HEAD
-  console.log("isMenuClose", isMenuClose);
-  if (isMenuClose === "true") makeOpenSidebarBtn();
-}
-
-export async function pathfromRoot(docId, docList) {
-=======
   if (isMenuClose === "true") {
     makeOpenSidebarBtn();
     handleMenuClose();
@@ -246,7 +187,6 @@ function makeOpenSidebarBtn() {
 
 // 현재 문서에서부터 최상위 문서까지 루트 찾기
 async function pathfromRoot(docId, docList) {
->>>>>>> dev.khw-test
   const path = [];
   let currentDoc = await handleGetDocById(docId);
 
@@ -260,11 +200,7 @@ async function pathfromRoot(docId, docList) {
 }
 
 // 재귀적으로 부모 문서 찾기
-<<<<<<< HEAD
-export function findParentDoc(childId, docs) {
-=======
 function findParentDoc(childId, docs) {
->>>>>>> dev.khw-test
   for (const doc of docs) {
     if (doc.documents.some((subDoc) => subDoc.id === childId)) {
       return doc;
@@ -275,8 +211,5 @@ function findParentDoc(childId, docs) {
   }
   return null;
 }
-<<<<<<< HEAD
-=======
 
 //
->>>>>>> dev.khw-test
