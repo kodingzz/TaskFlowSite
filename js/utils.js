@@ -123,12 +123,15 @@ export async function loadTextEditor(id) {
   </div>
 `;
   // 하위 문서들
-  const subDocs = data.documents;
+
+  const subDocs = data && data.documents;
+
   let subDocsLink = "";
-  console.log(subDocs);
-  subDocs.forEach((doc) => {
-    subDocsLink += `<a href="/documents/${doc.id}" data-url="${doc.id}">${doc.title}</a>`;
-  });
+  if (subDocs) {
+    subDocs.forEach((doc) => {
+      subDocsLink += `<a href="/documents/${doc.id}" data-url="${doc.id}">${doc.title}</a>`;
+    });
+  }
 
   const content =
     id === "Content"
@@ -151,12 +154,14 @@ export async function loadTextEditor(id) {
   document.querySelector("#editor").innerHTML = content;
 
   // 하위 링크들 클릭시 이동
-  document.querySelector(".editor-bottom").addEventListener("click", (e) => {
-    e.preventDefault();
-    const id = e.target.dataset.url;
-    history.pushState({ page: id }, "", `/documents/${id}`);
-    loadTextEditor(id);
-  });
+  const editorBottom = document.querySelector(".editor-bottom");
+  editorBottom &&
+    editorBottom.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = e.target.dataset.url;
+      history.pushState({ page: id }, "", `/documents/${id}`);
+      loadTextEditor(id);
+    });
 
   // 경로 읽기
   document.querySelector(".editor-dir").addEventListener("click", (e) => {
