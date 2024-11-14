@@ -154,9 +154,9 @@ document.querySelector("#editor").addEventListener(
       await handleUpdateDoc(
         id,
         JSON.stringify({ title: e.target.value.trim() })
-      )
-        .then(loadSidebarDocs)
-        .then(() => makePathDir(id));
+      ).then(() => makePathDir(id));
+      const targetA = document.querySelector(`a[data-url="${id}"]`);
+      targetA.textContent = e.target.value.trim();
     } else if (
       e.target.parentElement &&
       document.getElementById("text-container")

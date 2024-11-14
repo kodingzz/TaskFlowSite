@@ -7,9 +7,11 @@ export async function loadSidebarDocs() {
   const documents = await handleGetAllDocs();
   docList = documents;
 
+  let items = "";
   documents.forEach(async (doc) => {
-    await addDoc(doc);
+    items += makeItem(doc).outerHTML;
   });
+  sidebarItems.innerHTML = items;
 }
 async function addDoc(doc) {
   sidebarItems.appendChild(makeItem(doc));
@@ -54,12 +56,12 @@ function makeItem(doc, depth = 1) {
   li.appendChild(divContent);
 
   // 링크 클릭 시 새로운 페이지 로드 처리
-  a.addEventListener("click", (e) => {
-    e.preventDefault();
-    const id = e.currentTarget.dataset.url;
-    history.pushState({ page: id }, "", `/documents/${id}`);
-    loadTextEditor(id);
-  });
+  // a.addEventListener("click", (e) => {
+  //   e.preventDefault();
+  //   const id = e.currentTarget.dataset.url;
+  //   history.pushState({ page: id }, "", `/documents/${id}`);
+  //   loadTextEditor(id);
+  // });
 
   if (doc.documents.length !== 0 && depth < 3) {
     const childList = document.createElement("ul");
