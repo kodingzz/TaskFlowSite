@@ -81,7 +81,6 @@ modalContents.addEventListener("click", (e) => {
 
   if (clickedElement) {
     const id = clickedElement.dataset.url;
-    history.pushState({ page: id }, "", `/documents/${id}`);
     loadTextEditor(id);
     modalOverlay.style.display = "none";
     modal.style.display = "none";
