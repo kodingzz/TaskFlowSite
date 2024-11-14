@@ -66,3 +66,24 @@ input.title-input::placeholder {
   width: "100%";
   cursor: "text";
 }
+
+.editor-bottom {
+  width: 100%;
+
+  display: flex;
+  justify-content: start;
+  padding: 1rem;
+}
+
+.editor-bottom a {
+  background-color: #525252;
+  display: inline-block;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+}
+
+.editor-bottom a:hover {
+  transition: all 0.2s ease-in-out;
+  background-color: var(--main-light-gray);
+}
