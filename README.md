@@ -44,3 +44,15 @@
 - Editor 기능성 구현
 
 ## 📚 프로젝트 파일 구조
+
+    📦clone-notion
+    ┣ 📂assets
+    ┃ ┣ 📂fonts
+    ┃ ┃ ┗ 📂pretendard
+    ┃ ┃ ┃ ┗ 📂woff2
+    ┃ ┗ 📂images
+    ┣ 📂css
+    ┣ 📂js
+    ┣ 📜.gitignore
+    ┣ 📜README.md
+    ┗ 📜index.html
