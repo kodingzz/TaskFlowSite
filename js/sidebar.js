@@ -24,36 +24,53 @@ window.onload = async function () {
   await loadSidebarDocs();
 };
 
-// 하위 문서 추가 ( li,button 태그가 동적으로 생성되서 이벤트 할당이 안되는 issue) 및 문서 삭제
-sidebarItems.addEventListener("click", async (e) => {
-  const parentId =
-    e.target.parentElement.parentElement.querySelector("a").dataset.url;
+// 유틸리티 함수: 로컬 스토리지에서 배열 데이터를 관리
+const updateLocalStorageArray = (key, value, shouldAdd) => {
+  const storedData = localStorage.getItem(key);
+  const dataArray = storedData ? JSON.parse(storedData) : [];
 
-  if (e.target.classList.contains("sidebar-item-toggle")) {
-    const li = e.target.parentElement.parentElement;
-    li.classList.toggle("close");
-    const closeArr = localStorage.getItem("closeArr");
-    const convertedCloseArr = closeArr ? JSON.parse(closeArr) : [];
-    if (convertedCloseArr.includes(parentId) && !li.classList.contains("close"))
-      localStorage.setItem(
-        "closeArr",
-        JSON.stringify(convertedCloseArr.filter((num) => num !== parentId))
-      );
-    else
-      localStorage.setItem(
-        "closeArr",
-        JSON.stringify([...convertedCloseArr, parentId])
-      );
-  } else {
-    if (e.target.classList.contains("sidebar-item-add")) {
-      await handleCreateDoc(
-        JSON.stringify({ title: "하위 페이지", parent: parentId })
-      );
-      loadSidebarDocs(); // 모든 문서 다시 로드
-    } else if (e.target.classList.contains("sidebar-item-remove")) {
-      await handleDeleteDoc(parentId);
-      loadSidebarDocs(); // 모든 문서 다시 로드
-    }
+  const updatedArray = shouldAdd
+    ? [...dataArray, value]
+    : dataArray.filter((item) => item !== value);
+
+  localStorage.setItem(key, JSON.stringify(updatedArray));
+};
+
+// 핸들러: 토글 버튼 클릭
+const handleToggleClick = (li, parentId) => {
+  li.classList.toggle("close");
+  const isClosed = li.classList.contains("close");
+  updateLocalStorageArray("closeArr", parentId, isClosed);
+};
+
+// 핸들러: 하위 페이지 추가
+const handleAddClick = async (parentId) => {
+  await handleCreateDoc(
+    JSON.stringify({ title: "하위 페이지", parent: parentId })
+  );
+  loadSidebarDocs(); // 모든 문서 다시 로드
+};
+
+// 핸들러: 페이지 삭제
+const handleRemoveClick = async (parentId) => {
+  await handleDeleteDoc(parentId);
+  loadSidebarDocs(); // 모든 문서 다시 로드
+};
+
+// 메인 이벤트 리스너
+sidebarItems.addEventListener("click", async (e) => {
+  const target = e.target;
+  const li = target.closest("li");
+  const parentLink = li.querySelector("a");
+  const parentId = parentLink ? parentLink.dataset.url : null;
+
+  if (!parentId) return;
+
+  if (target.classList.contains("sidebar-item-toggle")) {
+    handleToggleClick(li, parentId);
+  } else if (target.classList.contains("sidebar-item-add")) {
+    await handleAddClick(parentId);
+  } else if (target.classList.contains("sidebar-item-remove")) {
+    await handleRemoveClick(parentId);
   }
 });
-//

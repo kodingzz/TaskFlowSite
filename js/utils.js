@@ -37,11 +37,9 @@ function makeItem(doc, depth = 1) {
 
   const btnAdd = document.createElement("button");
   btnAdd.classList.add("sidebar-item-add");
-  btnAdd.textContent = "+";
 
   const btnRemove = document.createElement("button");
   btnRemove.classList.add("sidebar-item-remove");
-  btnRemove.textContent = "-";
 
   // depth가 3이상이면 추가버튼 x
   if (depth < 3) {
@@ -232,5 +230,3 @@ function findParentDoc(childId, docs) {
   }
   return null;
 }
-
-//
