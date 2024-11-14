@@ -156,9 +156,11 @@ export async function loadTextEditor(id) {
   editorBottom &&
     editorBottom.addEventListener("click", (e) => {
       e.preventDefault();
-      const id = e.target.dataset.url;
-      history.pushState({ page: id }, "", `/documents/${id}`);
-      loadTextEditor(id);
+      if (e.target.tagName === "A") {
+        const id = e.target.dataset.url;
+        history.pushState({ page: id }, "", `/documents/${id}`);
+        loadTextEditor(id);
+      }
     });
 
   // 경로 읽기
