@@ -10,6 +10,12 @@
   max-width: 1008px;
   margin-top: 4px;
   margin-bottom: 4px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.text-block:hover {
+  background-color: var(--main-gray);
 }
 
 div.text-block {
