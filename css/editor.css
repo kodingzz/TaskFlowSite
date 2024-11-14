@@ -12,6 +12,18 @@
   margin-bottom: 4px;
 }
 
+div.text-block {
+  font-size: 16px;
+}
+h2.text-block {
+  font-size: 28px;
+}
+h3.text-block {
+  font-size: 24px;
+}
+h4.text-block {
+  font-size: 20px;
+}
 /* text-block 안에 있는 <ul>과 <ol> 스타일 */
 .text-block ul,
 .text-block ol {
@@ -68,18 +80,19 @@ input.title-input::placeholder {
 
 .editor-bottom {
   width: 100%;
-
+  max-width: 1108px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: start;
   padding: 1rem;
+  gap: 8px;
 }
 
 .editor-bottom a {
-  background-color: #525252;
+  background-color: var(--main-gray);
   display: inline-block;
   padding: 10px;
   border-radius: 8px;
-  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
 }
 
 .editor-bottom a:hover {
