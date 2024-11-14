@@ -56,20 +56,19 @@
   border-radius: 4px;
   transition: all 0.2s;
 }
-.sidebar-item a:hover {
-  background-color: var(--main-light-gray);
-}
+
 .sidebar-item-add,
-.sidebar-item-remove {
-  position: relative;
-}
+.sidebar-item-remove,
 .sidebar-item-toggle {
   position: relative;
-  background-color: var(--main-gray);
+  background-color: inherit;
 }
 
-.sidebar-item-toggle:hover {
-  background-color: var(--main-light-gray);
+.sidebar-item-btns {
+  opacity: 0;
+}
+.sidebar-item-content:hover > .sidebar-item-btns {
+  opacity: 1;
 }
 
 .sidebar-item-add::after,
@@ -77,8 +76,8 @@
 .sidebar-item-toggle::after {
   content: "";
   display: block;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   background-size: cover;
   position: absolute;
   top: 50%;
@@ -102,16 +101,16 @@
 }
 
 .sidebar-btn.openBtn {
-  width: 32px;
-  height: 32px;
-  background-color: var(--main-bg-color);
+  width: 24px;
+  height: 24px;
   position: relative;
 }
+
 .sidebar-btn.openBtn::after {
   content: "";
   display: block;
   width: 10px;
-  height: 14px;
+  height: 12px;
   background-size: contain;
   position: absolute;
   top: 50%;
@@ -119,4 +118,7 @@
   transform: translate(-50%, -50%);
   background-image: url("../assets/images/reArrow.png");
   background-repeat: no-repeat;
+}
+.sidebar-btn:hover {
+  background-color: var(--main-light-gray);
 }
