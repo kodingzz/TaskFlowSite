@@ -1,12 +1,11 @@
 import { handleGetAllDocs } from "./client.js";
+import { loadTextEditor } from "./utils.js";
 
 // 검색 기능
 const searchBtn = document.querySelector(".sidebar-search");
 const modalOverlay = document.querySelector(".modal-overlay");
 const modal = document.querySelector(".modal");
 const searchForm = document.querySelector(".modal-search");
-const searchDocBtn = document.querySelector(".modal-search button");
-const searchDocInput = document.querySelector(".modal-search input");
 const modalContents = document.querySelector(".modal-contents");
 
 searchBtn.addEventListener("click", () => {
@@ -25,16 +24,19 @@ modal.addEventListener("click", (e) => {
 });
 
 // 검색 버튼
-
 searchForm.addEventListener("submit", async (e) => {
-  if (searchDocInput.value === "") return;
+  const searchDocInput = document.querySelector(".modal-search input");
+  const term = searchDocInput.value.replace(/\s/g, ""); // 검색어 전달
+
   e.preventDefault();
+  if (term === "") {
+    alert("비어있으면 안돼!");
+    searchDocInput.value = "";
+    return;
+  }
 
   //  검색 결과들
   const allDocs = await handleGetAllDocs();
-
-  const term = searchDocInput.value.replace(/\s/g, ""); // 검색어 전달
-
   const results = searchDocs(allDocs, term);
 
   let contents = "";
@@ -42,13 +44,12 @@ searchForm.addEventListener("submit", async (e) => {
     contents += `
         <a class="modal-content" href="/documents/${doc.id}" data-url="${doc.id}">
             <span>${doc.title}</span>
-            <p>${doc.contents}</p>
         </a>
-
     `;
   });
 
   modalContents.innerHTML = contents || "정보를 찾지 못했습니다.";
+  searchDocInput.value = "";
 });
 
 function searchDocs(docs, searchTerm) {
@@ -79,11 +80,9 @@ modalContents.addEventListener("click", (e) => {
   const clickedElement = e.target.closest("a");
 
   if (clickedElement) {
-    const id = clickedElement.dataset.url; // a 태그에서 `data-url` 속성 값을 가져옴
-    history.pushState({ page: id }, "", `/documents/${id}`);
+    const id = clickedElement.dataset.url;
+    loadTextEditor(id);
     modalOverlay.style.display = "none";
     modal.style.display = "none";
-
-    // window.location.href = clickedElement.href; // a 태그의 href 속성으로 이동
   }
 });
