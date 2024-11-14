@@ -157,15 +157,10 @@ document.querySelector("#editor").addEventListener(
       )
         .then(loadSidebarDocs)
         .then(() => makePathDir(id));
-    } else if (
-      e.target.parentElement &&
-      document.getElementById("text-container")
-    ) {
+    } else if (e.target.parentElement) {
       await handleUpdateDoc(
         id,
-        JSON.stringify({
-          content: document.getElementById("text-container").innerHTML.trim(),
-        })
+        JSON.stringify({ content: e.target.parentElement.innerHTML.trim() })
       );
     }
 
@@ -194,7 +189,10 @@ document.querySelector("#editor").addEventListener(
         ) {
           // Unordered list 처리
           createNewUlItem(currentBlock);
-        } else if (textContent.trim() === "line") {
+        } else if (
+          textContent.trim().length >= 3 &&
+          /^-+$/.test(textContent.trim())
+        ) {
           // 구분선 처리
           createHorizontalRule(currentBlock);
         }
