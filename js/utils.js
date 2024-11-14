@@ -105,35 +105,39 @@ export async function makePathDir(id) {
 export async function loadTextEditor(id) {
   const dirContent = await makePath(id);
   let data = id !== "Content" && (await handleGetDocById(id));
-  const EDITOR_TEMP = `<div class="editor-content">
-  <input
-    id="title-input"
-    class="title-input"
-    placeholder="제목"
-    value="${data ? data.title : "제목없음"}"
-  />
-<div id="text-container">
-${
-  data && data.content !== null
-    ? data.content
-    : '<div class="text-block" contenteditable="true"></div>'
-}
-</div>
-</div>
+  console.log(data);
+  const EDITOR_TEMP = `
+  <div class="editor-content">
+    <input
+      id="title-input"
+      class="title-input"
+      placeholder="제목"
+      value="${data ? data.title : "제목없음"}"
+    />
+    <div id="text-container">
+    ${
+      data && data.content !== null
+        ? data.content
+        : '<div class="text-block" contenteditable="true"></div>'
+    }
+    </div>
+  </div>
 `;
   const content =
     id === "Content"
       ? `
       <div class="editor-top">
-    <div class="editor-dir">${dirContent}</div>
-  </div>
+        <div class="editor-dir">${dirContent}</div>
+      </div>
       <div class="intro">Hello World</div>`
       : id
       ? `
-    <div class="editor-top">
-    <div class="editor-dir">${dirContent}</div>
-  </div>
- ${EDITOR_TEMP}
+      <div class="editor-top">
+        <div class="editor-dir">${dirContent}</div>
+      </div>
+      ${EDITOR_TEMP}
+      <div class="editor-bottom">
+      </div>
   `
       : "<h1>페이지를 찾을 수 없습니다.</h1>";
   document.querySelector("#editor").innerHTML = content;
