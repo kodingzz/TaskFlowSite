@@ -1,32 +1,73 @@
+import { handleUpdateDoc } from "./client.js";
+import { loadSidebarDocs, makePathDir } from "./utils.js";
 // 텍스트 에디터
 
-// default 텍스트 블록에 대한 키보드 입력 처리
+// 새 editable 블록 생성 (타입 정할 수 있음)
+function createNewEditableBlock(type) {
+  const newBlock = document.createElement(type);
+  newBlock.contentEditable = "true";
+  newBlock.classList.add("text-block");
+  return newBlock;
+}
+
+///////////////////////////////////////////////////////
+
+// 이전 블록이 ul 또는 ol인지 확인하는 함수
+function isPreviousBlockList(block) {
+  return block && (block.tagName === "UL" || block.tagName === "OL");
+}
+///////////////////////////////////////////////////////
+
+let isComposing = true;
+
+document.querySelector("#editor").addEventListener("compositionstart", () => {
+  isComposing = false;
+});
+document.querySelector("#editor").addEventListener("compositionend", () => {
+  isComposing = true;
+});
+
+///////////////////////////////////////////////////////
 // Enter 키를 누를 때 동작
+
 document.querySelector("#editor").addEventListener("keydown", function (e) {
   const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
+  const previousBlock = currentBlock.previousElementSibling;
   const titleInput = document.getElementById("title-input");
-  console.log(titleInput);
 
   // Enter 키가 눌렸을 때
-  if (e.key === "Enter") {
-    e.preventDefault(); // 기본 Enter 동작을 막음
+  if (isComposing && e.key === "Enter") {
+    e.preventDefault();
 
     // 현재 포커스가 Text input일 때
     if (currentBlock === titleInput) {
-      createNewFirstBlock();
-      newTextBlock.focus();
+      startTextEditor();
     }
+
     // 현재 블록이 text-block일 경우, 새 블록을 생성
     if (currentBlock.classList.contains("text-block")) {
-      createNewBlock(currentBlock);
+      addDefaultBlock(currentBlock);
     }
 
     // 리스트 블록일 경우 li를 계속함
     if (currentBlock.tagName === "LI") {
-      const parentEl = currentBlock.parentElement;
-      continueLiBlock(parentEl);
+      const parentBlock = currentBlock.parentElement;
+      continueLiBlock(parentBlock);
     }
   }
+  //////////////////////////////////////////////////////
+
+  // 키 업/다운 이동 처리
+  // 리펙토링시 previousBlock으로 바꾸기
+  if (e.key === "ArrowUp" && currentBlock.previousElementSibling) {
+    currentBlock.previousElementSibling.focus();
+    setCaretToEnd(currentBlock.previousElementSibling);
+  }
+
+  if (e.key === "ArrowDown" && currentBlock.nextElementSibling) {
+    currentBlock.nextElementSibling.focus();
+  }
+
   ///////////////////////////////////////////////////////
   // 현재 블록 빈 블록일 때 Delete/Backspace 처리
   if (
@@ -37,28 +78,33 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
     const textContainer = document.querySelector("#text-container");
 
     // 1. 첫 번째 텍스트 블록일 때
-    if (
-      currentBlock === document.querySelectorAll(".text-block")[0] &&
-      currentBlock.textContent.trim() === ""
-    ) {
+    if (currentBlock === document.querySelectorAll(".text-block")[0]) {
+      e.preventDefault();
       titleInput.focus();
     }
 
     // 2. 현재 블록이 기본 블록일 때
-    if (currentBlock.tagName === "DIV") {
-      // 2.1 이전 요소가 ul 일 때
+    if (
+      currentBlock.tagName === "DIV" ||
+      currentBlock.tagName === "H2" ||
+      currentBlock.tagName === "H3" ||
+      currentBlock.tagName === "H4"
+    ) {
+      e.preventDefault();
+      // 2.1 이전 요소가 listHead 일 때
       if (isPreviousBlockList(previousBlock)) {
         e.preventDefault(); // 기본 동작 방지
         currentBlock.remove(); // 현재 빈 div 블록 삭제
         //이전 ul/ol의 마지막 자식 요소를 찾고 포커스 이동
-        const lastChild = previousBlock.lastElementChild;
-        if (lastChild) {
-          lastChild.focus(); // 마지막 li에 포커스 이동
-          setCaretToEnd(lastChild); // 마지막 글자 뒤로 커서 이동
+        const preBlocklastChild = previousBlock.lastElementChild;
+        if (preBlocklastChild) {
+          preBlocklastChild.focus(); // 마지막 li에 포커스 이동
+          setCaretToEnd(preBlocklastChild); // 마지막 글자 뒤로 커서 이동
         }
-      } // 2.2 이전 요소가 기본 블록일 때
+      }
+      // 2.2 이전 요소가 listHead가 아닐때
       else {
-        e.preventDefault(); // 기본 동작 방지
+        // e.preventDefault(); // 기본 동작 방지
         currentBlock.remove(); // 현재 빈 div 블록 삭제
         if (previousBlock) {
           previousBlock.focus(); // 이전 블록으로 포커스 이동
@@ -67,7 +113,7 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
       }
     }
 
-    // ul/ol 내 li 삭제
+    // 3. 현재 태그가 li일 때 ul/ol 내 li 삭제
     if (
       currentBlock.tagName === "LI" &&
       currentBlock.textContent.trim() === ""
@@ -76,17 +122,6 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
         currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
       deleteListItem(parentEl);
     }
-  }
-
-  /////////////////////// 구분
-
-  // 키 업/다운 이동 처리
-  if (e.key === "ArrowUp" && currentBlock.previousElementSibling) {
-    currentBlock.previousElementSibling.focus();
-  }
-
-  if (e.key === "ArrowDown" && currentBlock.nextElementSibling) {
-    currentBlock.nextElementSibling.focus();
   }
 });
 
@@ -99,61 +134,82 @@ function setCaretToEnd(element) {
   selection.removeAllRanges();
   selection.addRange(range);
 }
-
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
 // 텍스트 입력 처리시 반응하는 이벤트 리스너
-document.querySelector("#editor").addEventListener("input", function (e) {
-  const currentBlock = document.activeElement;
-  console.log(e.data);
+document.querySelector("#editor").addEventListener(
+  "input",
+  debounce(async function (e) {
+    const currentBlock = document.activeElement;
+    const titleInput = document.getElementById("title-input");
+    const pathname = window.location.pathname;
+    const id = pathname.split("/").pop();
 
-  // 텍스트 블록 내에서만 처리
-  if (currentBlock && currentBlock.classList.contains("text-block")) {
-    const textContent = currentBlock.textContent;
+    if (e.target === titleInput) {
+      await handleUpdateDoc(
+        id,
+        JSON.stringify({ title: e.target.value.trim() })
+      )
+        .then(loadSidebarDocs)
+        .then(() => makePathDir(id));
+    } else if (e.target.parentElement) {
+      await handleUpdateDoc(
+        id,
+        JSON.stringify({ content: e.target.parentElement.innerHTML.trim() })
+      );
+    }
 
-    // Markdown 인식 (트리거 인식)
-    if (e.data === " ") {
-      if (textContent.startsWith("###") && textContent.length >= 4) {
-        // '### ' -> h3
-        convertToHeaderBlock(currentBlock, "h4", 4);
-      } else if (textContent.startsWith("##") && textContent.length >= 3) {
-        // '## ' -> h2
-        convertToHeaderBlock(currentBlock, "h3", 3);
-      } else if (textContent.startsWith("#") && textContent.length >= 2) {
-        // '# ' -> h1
-        convertToHeaderBlock(currentBlock, "h2", 2);
-      } else if (/^\d+\./.test(textContent.trim())) {
-        // Ordered list 처리 (숫자 목록 처리)
-        createNewOlItem(currentBlock); // createNewOlItem로 변경
-      } else if (
-        textContent.startsWith("*") ||
-        textContent.startsWith("-") ||
-        textContent.startsWith("+")
-      ) {
-        // Unordered list 처리
-        createNewUlItem(currentBlock);
-      } else if (textContent.trim() === "line") {
-        // 구분선 처리
-        createHorizontalRule(currentBlock);
+    // 텍스트 블록 내에서만 처리
+    if (currentBlock && currentBlock.classList.contains("text-block")) {
+      const textContent = currentBlock.textContent;
+
+      // Markdown 인식 (트리거 인식)
+      if (e.data === " ") {
+        if (textContent.startsWith("###") && textContent.length >= 4) {
+          // '### ' -> h3
+          convertToHeaderBlock(currentBlock, "h4", 4);
+        } else if (textContent.startsWith("##") && textContent.length >= 3) {
+          // '## ' -> h2
+          convertToHeaderBlock(currentBlock, "h3", 3);
+        } else if (textContent.startsWith("#") && textContent.length >= 2) {
+          // '# ' -> h1
+          convertToHeaderBlock(currentBlock, "h2", 2);
+        } else if (/^\d+\./.test(textContent.trim())) {
+          // Ordered list 처리 (숫자 목록 처리)
+          createNewOlItem(currentBlock); // createNewOlItem로 변경
+        } else if (
+          textContent.startsWith("*") ||
+          textContent.startsWith("-") ||
+          textContent.startsWith("+")
+        ) {
+          // Unordered list 처리
+          createNewUlItem(currentBlock);
+        } else if (textContent.trim() === "line") {
+          // 구분선 처리
+          createHorizontalRule(currentBlock);
+        }
       }
     }
-  }
-});
+  }, 100)
+);
 
-// 새로운 텍스트 블록 생성 함수
-function createNewFirstBlock() {
-  const newTextBlock = document.createElement("div");
-  newTextBlock.classList.add("text-block");
-  newTextBlock.contentEditable = "true";
+// 텍스트 에디터 시작시 새로운 텍스트 블록을 자동으로 생성
 
+function startTextEditor() {
+  const newTextBlock = createNewEditableBlock("div");
   document.getElementById("text-container").prepend(newTextBlock);
   newTextBlock.focus();
 }
 
-// 새로운 텍스트 블록 생성 함수
-function createNewBlock(currentBlock) {
-  const newTextBlock = document.createElement("div");
-  newTextBlock.classList.add("text-block");
-  newTextBlock.contentEditable = "true";
-
+// 새로운 텍스트 블록 생성 함수 (추가와 포커스)
+// 이 커렌트 블록은 매개변수로 받고 인수로 전달해야 맞는 것이다!
+function addDefaultBlock(currentBlock) {
+  const newTextBlock = createNewEditableBlock("div");
   currentBlock.parentNode.insertBefore(newTextBlock, currentBlock.nextSibling);
   newTextBlock.focus();
 }
@@ -162,7 +218,7 @@ function createNewBlock(currentBlock) {
 
 function convertToHeaderBlock(block, headerTag, sliceLength) {
   const remainingText = block.textContent.slice(sliceLength); // Markdown 기호 제거
-  const headerBlock = document.createElement(headerTag);
+  const headerBlock = createNewEditableBlock(headerTag);
   headerBlock.textContent = remainingText;
   headerBlock.classList.add("text-block");
 
@@ -174,6 +230,7 @@ function convertToHeaderBlock(block, headerTag, sliceLength) {
 function createNewUlItem(block) {
   // <li> 태그로 사용할 새로운 목록 항목 생성
   const newListItem = document.createElement("li");
+  newListItem.contentEditable = "true";
   newListItem.textContent = block.textContent.trim().slice(2); // 기존 텍스트에서 Markdown 기호 제거
 
   // 새로 생성된 <ul> 태그에 <li> 항목 추가
@@ -184,7 +241,7 @@ function createNewUlItem(block) {
   block.replaceWith(newListhead);
 
   // 새 목록 항목을 편집 가능하게 설정하고 포커스 이동
-  newListItem.contentEditable = "true";
+
   newListItem.focus();
 }
 
@@ -224,14 +281,13 @@ function continueLiBlock(parentEl) {
 
 function deleteListItem(parentEl) {
   // 1. 기본 변수 세팅: 현재 li의 부모 엘리먼트 + ul 또는 ol 다음 형제 요소 + 부모 리스트의 이전 형제 요소
+  // 여기 currentBlock은 있어야 한다..!
   const currentBlock = document.activeElement;
   const parentList = currentBlock.closest(parentEl);
 
   // 2. 기본 블록 만들어서 지워진 li 블록 대체
   // 새로운 기본 블록 생성
-  const newTextBlock = document.createElement("div");
-  newTextBlock.classList.add("text-block");
-  newTextBlock.contentEditable = "true";
+  const newTextBlock = createNewEditableBlock("div");
 
   // li 블록을 대체
   currentBlock.replaceWith(newTextBlock);
