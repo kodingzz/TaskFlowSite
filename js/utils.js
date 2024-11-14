@@ -120,6 +120,7 @@ export async function loadTextEditor(id) {
     </div>
   </div>
 `;
+
   // 하위 문서들
 
   const subDocs = data && data.documents;
