@@ -77,15 +77,6 @@ input.title-input::placeholder {
   font-weight: bold;
 }
 
-.hr {
-  border: "none";
-  height: "2px";
-  background-color: "#000";
-  margin: "20px 0";
-  width: "100%";
-  cursor: "text";
-}
-
 .editor-bottom {
   width: 100%;
   max-width: 1108px;

@@ -1,6 +1,5 @@
 import { handleUpdateDoc } from "./client.js";
-import { loadSidebarDocs, makePathDir } from "./utils.js";
-// 텍스트 에디터
+import { makePathDir } from "./utils.js";
 
 // 새 editable 블록 생성 (타입 정할 수 있음)
 function createNewEditableBlock(type) {
@@ -10,14 +9,12 @@ function createNewEditableBlock(type) {
   return newBlock;
 }
 
-///////////////////////////////////////////////////////
-
 // 이전 블록이 ul 또는 ol인지 확인하는 함수
 function isPreviousBlockList(block) {
   return block && (block.tagName === "UL" || block.tagName === "OL");
 }
-///////////////////////////////////////////////////////
 
+// 입력중인 상태
 let isComposing = true;
 
 document.querySelector("#editor").addEventListener("compositionstart", () => {
@@ -27,9 +24,7 @@ document.querySelector("#editor").addEventListener("compositionend", () => {
   isComposing = true;
 });
 
-///////////////////////////////////////////////////////
 // Enter 키를 누를 때 동작
-
 document.querySelector("#editor").addEventListener("keydown", function (e) {
   const currentBlock = document.activeElement; // 현재 포커스가 있는 블록을 가져옴
   const previousBlock = currentBlock.previousElementSibling;
@@ -55,26 +50,23 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
       continueLiBlock(parentBlock);
     }
   }
-  //////////////////////////////////////////////////////
 
   // 키 업/다운 이동 처리
   // 리펙토링시 previousBlock으로 바꾸기
-  if (e.key === "ArrowUp" && currentBlock.previousElementSibling) {
-    currentBlock.previousElementSibling.focus();
-    setCaretToEnd(currentBlock.previousElementSibling);
+  if (e.key === "ArrowUp" && previousBlock) {
+    previousBlock.focus();
+    setCaretToEnd(previousBlock);
   }
 
   if (e.key === "ArrowDown" && currentBlock.nextElementSibling) {
     currentBlock.nextElementSibling.focus();
   }
 
-  ///////////////////////////////////////////////////////
   // 현재 블록 빈 블록일 때 Delete/Backspace 처리
   if (
-    (e.key === "Delete" || e.key === "Backspace") &&
-    currentBlock.textContent.trim() === ""
+    currentBlock.textContent.trim() === "" &&
+    (e.key === "Delete" || e.key === "Backspace")
   ) {
-    const previousBlock = currentBlock.previousElementSibling;
     const textContainer = document.querySelector("#text-container");
 
     // 1. 첫 번째 텍스트 블록일 때
@@ -115,12 +107,12 @@ document.querySelector("#editor").addEventListener("keydown", function (e) {
 
     // 3. 현재 태그가 li일 때 ul/ol 내 li 삭제
     if (
-      currentBlock.tagName === "LI" &&
-      currentBlock.textContent.trim() === ""
+      currentBlock.textContent.trim() === "" &&
+      currentBlock.tagName === "LI"
     ) {
       const parentEl =
         currentBlock.parentElement.tagName === "UL" ? "ul" : "ol";
-      deleteListItem(parentEl);
+      deleteListAndChangeBlock(parentEl);
     }
   }
 });
@@ -134,13 +126,24 @@ function setCaretToEnd(element) {
   selection.removeAllRanges();
   selection.addRange(range);
 }
+
+// 디바운스 : 짧은 시간 내에 여러 번 발생할 수 있는 이벤트(예: 키 입력, 버튼 클릭 등)의 실행을 최소화하는 기술
 function debounce(func, delay) {
   let timer;
   return function (...args) {
+    const target = args[0].target;
+
     clearTimeout(timer);
-    timer = setTimeout(() => func.apply(this, args), delay);
+    timer = setTimeout(
+      () => {
+        func.apply(this, args);
+        console.log("저장되었습니다!");
+      },
+      target.tagName === "INPUT" ? 100 : delay
+    );
   };
 }
+
 // 텍스트 입력 처리시 반응하는 이벤트 리스너
 document.querySelector("#editor").addEventListener(
   "input",
@@ -175,32 +178,34 @@ document.querySelector("#editor").addEventListener(
 
       // Markdown 인식 (트리거 인식)
       if (e.data === " ") {
+        // '### ' -> h3
         if (textContent.startsWith("###") && textContent.length >= 4) {
-          // '### ' -> h3
           convertToHeaderBlock(currentBlock, "h4", 4);
-        } else if (textContent.startsWith("##") && textContent.length >= 3) {
           // '## ' -> h2
+        } else if (textContent.startsWith("##") && textContent.length >= 3) {
           convertToHeaderBlock(currentBlock, "h3", 3);
-        } else if (textContent.startsWith("#") && textContent.length >= 2) {
           // '# ' -> h1
+        } else if (textContent.startsWith("#") && textContent.length >= 2) {
           convertToHeaderBlock(currentBlock, "h2", 2);
-        } else if (/^\d+\./.test(textContent.trim())) {
+
           // Ordered list 처리 (숫자 목록 처리)
+        } else if (/^\d+\./.test(textContent.trim())) {
           createNewOlItem(currentBlock); // createNewOlItem로 변경
+          // Unordered List 처리
         } else if (
           textContent.startsWith("*") ||
           textContent.startsWith("-") ||
           textContent.startsWith("+")
         ) {
-          // Unordered list 처리
           createNewUlItem(currentBlock);
-        } else if (
-          textContent.trim().length >= 3 &&
-          /^-+$/.test(textContent.trim())
-        ) {
-          // 구분선 처리
-          createHorizontalRule(currentBlock);
         }
+        // else if (
+        //   textContent.trim().length >= 3 &&
+        //   /^-+$/.test(textContent.trim())
+        // ) {
+        //   // 구분선 처리
+        //   createHorizontalRule(currentBlock);
+        // }
       }
     }
   }, 100)
@@ -218,7 +223,8 @@ function startTextEditor() {
 // 이 커렌트 블록은 매개변수로 받고 인수로 전달해야 맞는 것이다!
 function addDefaultBlock(currentBlock) {
   const newTextBlock = createNewEditableBlock("div");
-  currentBlock.parentNode.insertBefore(newTextBlock, currentBlock.nextSibling);
+  currentBlock.parentNode.appendChild(newTextBlock);
+  // currentBlock.parentNode.insertBefore(newTextBlock, currentBlock.nextSibling);
   newTextBlock.focus();
 }
 
@@ -281,13 +287,24 @@ function continueLiBlock(parentEl) {
   const newListItem = document.createElement("li"); // 새로운 li 생성
   newListItem.contentEditable = "true"; // 새 li를 편집 가능하게 설정
   parentEl.appendChild(newListItem); // ul/ol의 자식으로 새 li를 추가
+  newListItem.addEventListener("focus", function () {
+    const selection = window.getSelection();
+    const range = document.createRange();
+
+    // <li> 요소의 첫 번째 위치로 커서 설정
+    range.setStart(newListItem, 0);
+    range.setEnd(newListItem, 0);
+
+    // 커서 위치 업데이트
+    selection.removeAllRanges();
+    selection.addRange(range);
+  });
+
   newListItem.focus(); // 새 li에 포커스를 이동
 }
 
-///////////////////////////// /////////////
 // li 요소를 지우고 기본 블록으로 바꾸는 함수
-
-function deleteListItem(parentEl) {
+function deleteListAndChangeBlock(parentEl) {
   // 1. 기본 변수 세팅: 현재 li의 부모 엘리먼트 + ul 또는 ol 다음 형제 요소 + 부모 리스트의 이전 형제 요소
   // 여기 currentBlock은 있어야 한다..!
   const currentBlock = document.activeElement;
@@ -317,17 +334,18 @@ function deleteListItem(parentEl) {
     setCaretToEnd(newTextBlock);
   }
 }
-// 구분선 생성 함수
-function createHorizontalRule(block) {
-  const hr = document.createElement("hr");
-  block.replaceWith(hr);
+// // 구분선 생성 함수
+// function createHorizontalRule(block) {
+//   const hr = document.createElement("hr");
+//   block.replaceWith(hr);
 
-  const newTextBlock = document.createElement("div");
-  newTextBlock.classList.add("text-block");
-  newTextBlock.contentEditable = "true";
+//   console.log(block);
 
-  hr.parentNode.insertBefore(newTextBlock, hr.nextSibling);
+//   const newTextBlock = document.createElement("div");
+//   newTextBlock.classList.add("text-block");
+//   newTextBlock.contentEditable = "true";
 
-  newTextBlock.focus();
-  setCaretToEnd(newTextBlock);
-}
+//   hr.parentNode.insertBefore(newTextBlock, hr.nextElementSibling);
+//   newTextBlock.focus();
+//   setCaretToEnd(newTextBlock);
+// }
