@@ -71,6 +71,15 @@
   opacity: 1;
 }
 
+.sidebar-item-content.active {
+  background-color: var(--main-light-gray);
+  font-weight: bold;
+  font-size: 16px;
+}
+.sidebar-item-content.active .sidebar-item-btns {
+  opacity: 1;
+}
+
 .sidebar-item-add::after,
 .sidebar-item-remove::after,
 .sidebar-item-toggle::after {

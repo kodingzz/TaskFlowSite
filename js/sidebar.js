@@ -1,6 +1,11 @@
 "use strict";
 
-import { handleCreateDoc, handleDeleteDoc } from "./client.js";
+import {
+  handleCreateDoc,
+  handleDeleteDoc,
+  handleGetAllDocs,
+  handleGetDocById,
+} from "./client.js";
 
 import {
   loadTextEditor,
@@ -20,7 +25,11 @@ window.addEventListener("popstate", function (event) {
 // 부모 문서 추가
 addDocBtn.addEventListener("click", async () => {
   await handleCreateDoc(JSON.stringify({ title: "새 페이지", parent: null }));
+  const allDocs = await handleGetAllDocs();
+  const newId = allDocs.pop().id;
   loadSidebarDocs();
+  history.pushState({ page: newId }, "", `/documents/${newId}`);
+  loadTextEditor(newId);
 });
 
 // 페이지 로드 시 문서들을 가져오는 코드
@@ -54,7 +63,13 @@ const handleAddClick = async (parentId) => {
   await handleCreateDoc(
     JSON.stringify({ title: "하위 페이지", parent: parentId })
   );
+  const parentDocs = await handleGetDocById(parentId);
+  const newId = parentDocs.documents.pop().id;
+
   loadSidebarDocs(); // 모든 문서 다시 로드
+
+  history.pushState({ page: newId }, "", `/documents/${newId}`);
+  loadTextEditor(newId);
 };
 
 // 핸들러: 페이지 삭제
