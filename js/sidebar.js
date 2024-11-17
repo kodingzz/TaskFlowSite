@@ -2,7 +2,11 @@
 
 import { handleCreateDoc, handleDeleteDoc } from "./client.js";
 
-import { loadTextEditor, loadSidebarDocs } from "./utils.js";
+import {
+  loadTextEditor,
+  loadSidebarDocs,
+  showRemoveDocModal,
+} from "./utils.js";
 
 const sidebarItems = document.querySelector(".sidebar-nav ul");
 const addDocBtn = document.querySelector("#createDocBtn");
@@ -54,10 +58,10 @@ const handleAddClick = async (parentId) => {
 };
 
 // 핸들러: 페이지 삭제
-const handleRemoveClick = async (parentId) => {
-  await handleDeleteDoc(parentId);
-  loadSidebarDocs(); // 모든 문서 다시 로드
-};
+// const handleRemoveClick = async (parentId) => {
+//   await handleDeleteDoc(parentId);
+//   loadSidebarDocs(); // 모든 문서 다시 로드
+// };
 
 // 문서 이벤트 위임
 sidebarItems.addEventListener("click", async (e) => {
@@ -73,7 +77,7 @@ sidebarItems.addEventListener("click", async (e) => {
   } else if (target.classList.contains("sidebar-item-add")) {
     await handleAddClick(parentId);
   } else if (target.classList.contains("sidebar-item-remove")) {
-    await handleRemoveClick(parentId);
+    showRemoveDocModal(parentId);
   } else if (target.tagName === "A") {
     const id = target.dataset.url;
     history.pushState({ page: id }, "", `/documents/${id}`);

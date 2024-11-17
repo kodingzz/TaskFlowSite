@@ -45,18 +45,31 @@
       </section>
     </main>
 
-    <div class="modal-overlay">
-      <div class="modal">
+    <div class="modal-search-overlay">
+      <div class="modal-search">
         <div class="modal-title">
           <span>검색창</span>
         </div>
 
-        <form class="modal-search">
+        <form class="modal-search-form">
           <input type="text" placeholder="도큐먼트 제목을 입력하세요." />
           <button type="submit">검색</button>
         </form>
 
         <div class="modal-contents"></div>
+      </div>
+    </div>
+
+    <div class="modal-delete-overlay">
+      <div class="modal-delete">
+        <div class="modal-delete-title">
+          <span>정말로 삭제하시겠습니까?</span>
+        </div>
+
+        <form class="modal-delete-form">
+          <button class="modal-cancel-button" type="submit">취소</button>
+          <button class="modal-delete-button" type="submit">삭제</button>
+        </form>
       </div>
     </div>
     <script type="module" src="./js/index.js"></script>

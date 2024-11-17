@@ -19,3 +19,9 @@
 .editor-dir a:hover {
   background-color: var(--main-light-gray);
 }
+
+.editor-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

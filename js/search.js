@@ -3,9 +3,9 @@ import { loadTextEditor } from "./utils.js";
 
 // 검색 기능
 const searchBtn = document.querySelector(".sidebar-search");
-const modalOverlay = document.querySelector(".modal-overlay");
-const modal = document.querySelector(".modal");
-const searchForm = document.querySelector(".modal-search");
+const modalOverlay = document.querySelector(".modal-search-overlay");
+const modal = document.querySelector(".modal-search");
+const searchForm = document.querySelector(".modal-search-form");
 const modalContents = document.querySelector(".modal-contents");
 
 searchBtn.addEventListener("click", () => {
@@ -30,7 +30,7 @@ searchForm.addEventListener("submit", async (e) => {
 
   e.preventDefault();
   if (term === "") {
-    alert("비어있으면 안돼!");
+    alert("비어있으면 안됩니다!");
     searchDocInput.value = "";
     return;
   }
