@@ -73,7 +73,7 @@ function makeItem(doc, depth = 1) {
 }
 
 //  editor.js 파일을 동적으로 추가
-function loadEditorScript() {
+export function loadEditorScript() {
   const id = `editor-script`;
   if (!document.getElementById(id)) {
     const newScript = document.createElement("script");
@@ -87,7 +87,6 @@ function loadEditorScript() {
 // URL에 맞는 editor 동적 로드
 export async function loadTextEditor(id) {
   let currentDoc = id !== "Content" && (await handleGetDocById(id));
-  console.log(currentDoc);
 
   // 1. editor paths
   const dirContent = await makePath(id);
@@ -98,14 +97,14 @@ export async function loadTextEditor(id) {
       id="title-input"
       class="title-input"
       placeholder="제목"
-      value="${currentDoc ? currentDoc.title : "제목없음"}"
+      value="${currentDoc.title === "" ? "" : currentDoc.title}"
     />
     <div id="text-container">
     ${
       currentDoc && currentDoc.content !== null
         ? //  content의 div태그들을 불러옴
           currentDoc.content
-        : '<div class="text-block" contenteditable="true"></div>'
+        : '<div  class="text-block first-block" contenteditable="true"></div>'
     }
     </div>
 `;
@@ -197,6 +196,27 @@ export async function loadTextEditor(id) {
       link.classList.remove("active");
     }
   });
+
+  // 문서 처음 생성후 content 작성시 제목,내용 placeholder로 표시
+  const firstBlock = document.querySelector(".first-block");
+
+  if (firstBlock) {
+    firstBlock.textContent = "내용을 입력하세요.";
+
+    firstBlock.addEventListener("focus", () => {
+      if (firstBlock.classList.contains("first-block")) {
+        firstBlock.classList.remove("first-block");
+        firstBlock.textContent = "";
+      }
+    });
+
+    firstBlock.addEventListener("blur", () => {
+      if (firstBlock.textContent.trim() === "") {
+        firstBlock.classList.add("first-block");
+        firstBlock.textContent = "내용을 입력하세요.";
+      }
+    });
+  }
 }
 
 // 문서 경로 만들기

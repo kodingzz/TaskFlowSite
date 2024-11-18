@@ -47,10 +47,10 @@
   transform: rotate(-90deg);
 }
 .sidebar-item a {
-  display: inline-block; /* flex 사용 */
+  display: inline-block;
   height: 24px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; /* 말줄임표 속성 */
   white-space: nowrap;
   padding: 4px;
   border-radius: 4px;

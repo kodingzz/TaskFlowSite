@@ -5,6 +5,9 @@
   flex-direction: column;
   justify-content: center;
 }
+.first-block {
+  color: #aaa; /* Placeholder 스타일 */
+}
 .text-block {
   width: 100%;
   max-width: 1008px;
@@ -74,7 +77,6 @@ input.title-input {
 }
 input.title-input::placeholder {
   color: #525252;
-  font-weight: bold;
 }
 
 .editor-bottom {

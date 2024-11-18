@@ -11,6 +11,7 @@ import {
   loadTextEditor,
   loadSidebarDocs,
   showRemoveDocModal,
+  loadEditorScript,
 } from "./utils.js";
 
 const sidebarItems = document.querySelector(".sidebar-nav ul");
@@ -24,7 +25,7 @@ window.addEventListener("popstate", function (event) {
 
 // 부모 문서 추가
 addDocBtn.addEventListener("click", async () => {
-  await handleCreateDoc(JSON.stringify({ title: "새 페이지", parent: null }));
+  await handleCreateDoc(JSON.stringify({ title: "", parent: null }));
   const allDocs = await handleGetAllDocs();
   const newId = allDocs.pop().id;
   loadSidebarDocs();
@@ -60,9 +61,7 @@ const handleToggleClick = (li, parentId) => {
 
 // 핸들러: 하위 페이지 추가
 const handleAddClick = async (parentId) => {
-  await handleCreateDoc(
-    JSON.stringify({ title: "하위 페이지", parent: parentId })
-  );
+  await handleCreateDoc(JSON.stringify({ title: "", parent: parentId }));
   const parentDocs = await handleGetDocById(parentId);
   const newId = parentDocs.documents.pop().id;
 
