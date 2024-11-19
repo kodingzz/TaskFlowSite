@@ -35,6 +35,10 @@
             <img src="./assets/images/plus.png" alt="plus icon" />
             새 페이지 추가
           </button>
+          <button id="deleteDocAllBtn" type="button" class="sidebar-deleteAll">
+            <img src="./assets/images/trash.png" alt="delete icon" />
+            모든 문서 삭제
+          </button>
         </div>
       </header>
       <section id="editor" contenteditable="false">
@@ -44,6 +48,8 @@
         <div class="intro">Hi There!🖐</div>
       </section>
     </main>
+
+    <!-- 문서 검색 모달창 -->
 
     <div class="modal-search-overlay">
       <div class="modal-search">
@@ -60,10 +66,11 @@
       </div>
     </div>
 
+    <!-- 문서 삭제 모달창 -->
     <div class="modal-delete-overlay">
       <div class="modal-delete">
         <div class="modal-delete-title">
-          <span>정말로 삭제하시겠습니까?</span>
+          <!-- <span>문서를 삭제하시겠습니까?</span> -->
         </div>
 
         <form class="modal-delete-form">

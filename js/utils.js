@@ -11,6 +11,8 @@ export async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
 
+  console.log(documents);
+
   docList = documents;
 
   let items = "";
@@ -170,15 +172,6 @@ export async function loadTextEditor(id) {
       }
     });
 
-  // 동적 생성된 문서 삭제시 삭제 모달창
-  const editorTopDeleteBtn = document.querySelector("#deleteDocBtn");
-
-  editorTopDeleteBtn &&
-    editorTopDeleteBtn.addEventListener("click", () => {
-      const parentId = window.location.href.split("/").pop();
-      parentId && showRemoveDocModal(parentId);
-    });
-
   loadEditorScript();
 
   const isMenuClose = localStorage.getItem("isMenuClose");
@@ -262,34 +255,44 @@ function findParentDoc(childId, docs) {
 
 const modalDeleteOverlay = document.querySelector(".modal-delete-overlay");
 const modalDelete = document.querySelector(".modal-delete");
+const modalTitle = document.querySelector(".modal-delete-title");
 const deleteDocBtn = document.querySelector(".modal-delete-button");
 const cancelDocBtn = document.querySelector(".modal-cancel-button");
-let currentParentId = null;
 
-deleteDocBtn.addEventListener("click", async (e) => {
-  e.preventDefault();
+/**
+ * Opens the modal with dynamic content.
+ * @param {string} title - Title of the modal.
+ * @param {Function} onConfirm - Callback function when confirm is clicked.
+ */
 
-  modalDeleteOverlay.style.display = "none";
-  modalDelete.style.display = "none";
+// 문서 삭제 모달창 여는 함수
+export function openModal(title, onConfirm) {
+  modalTitle.innerHTML = title;
 
-  await handleDeleteDoc(currentParentId);
-  history.pushState({ page: "/" }, "", `/`); // root로 이동
-  loadTextEditor("Content");
-  loadSidebarDocs(); // 모든 문서 다시 로드
-});
-
-cancelDocBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  modalDeleteOverlay.style.display = "none";
-  modalDelete.style.display = "none";
-});
-
-// 문서 삭제 버튼 클릭시 삭제 모달창
-export function showRemoveDocModal(parentId) {
-  currentParentId = parentId;
-  modalDeleteOverlay.style.display = "block";
-  modalDelete.style.display = "flex";
+  deleteDocBtn.addEventListener(
+    "click",
+    (e) => {
+      if (onConfirm) onConfirm();
+      closeModal(e);
+    },
+    { once: true }
+  );
+  cancelDocBtn.addEventListener("click", (e) => {
+    closeModal(e);
+  });
 }
+export function closeModal(e) {
+  e.preventDefault();
+  modalDeleteOverlay.style.display = "none";
+  modalDelete.style.display = "none";
+}
+
+// deleteDocBtn.addEventListener("click", async () => {
+//   await handleDeleteDoc(currentParentId);
+//   history.pushState({ page: "/" }, "", `/`); // root로 이동
+//   loadTextEditor("Content");
+//   loadSidebarDocs(); // 모든 문서 다시 로드
+// });
 
 // 사이드바 토글 버튼 클릭시 사이드바 접히고 오픈버튼 생성
 document.getElementById("toggleSidebar").addEventListener("click", () => {
