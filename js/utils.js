@@ -11,8 +11,6 @@ export async function loadSidebarDocs() {
   sidebarItems.innerHTML = "";
   const documents = await handleGetAllDocs();
 
-  console.log(documents);
-
   docList = documents;
 
   let items = "";

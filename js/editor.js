@@ -133,15 +133,42 @@ function debounce(func, delay) {
   return function (...args) {
     const target = args[0].target;
 
+    const markdown = ["#", "##", "###", "-", "*", "-", "+"];
+    const content = target.textContent;
     clearTimeout(timer);
     timer = setTimeout(
       () => {
         func.apply(this, args);
         console.log("저장되었습니다!");
       },
-      target.tagName === "INPUT" ? 100 : delay
+      target.tagName === "DIV"
+        ? !markdown.includes(content.trim())
+          ? delay
+          : 100
+        : 100
     );
   };
+}
+
+// 마크다운 즉시 반응 함수
+function handleMarkdownConversion(currentBlock) {
+  const textContent = currentBlock.textContent;
+
+  if (textContent.startsWith("###") && textContent.length >= 4) {
+    convertToHeaderBlock(currentBlock, "h4", 4);
+  } else if (textContent.startsWith("##") && textContent.length >= 3) {
+    convertToHeaderBlock(currentBlock, "h3", 3);
+  } else if (textContent.startsWith("#") && textContent.length >= 2) {
+    convertToHeaderBlock(currentBlock, "h2", 2);
+  } else if (/^\d+\./.test(textContent.trim())) {
+    createNewOlItem(currentBlock);
+  } else if (
+    textContent.startsWith("*") ||
+    textContent.startsWith("-") ||
+    textContent.startsWith("+")
+  ) {
+    createNewUlItem(currentBlock);
+  }
 }
 
 // 텍스트 입력 처리시 반응하는 이벤트 리스너
@@ -208,7 +235,7 @@ document.querySelector("#editor").addEventListener(
         // }
       }
     }
-  }, 100)
+  }, 5000)
 );
 
 // 텍스트 에디터 시작시 새로운 텍스트 블록을 자동으로 생성
