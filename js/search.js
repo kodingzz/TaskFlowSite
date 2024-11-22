@@ -1,5 +1,5 @@
 import { handleGetAllDocs } from "./client.js";
-import { loadTextEditor } from "./utils.js";
+import { closeModal, loadTextEditor } from "./utils.js";
 
 // 검색 기능
 const searchBtn = document.querySelector(".sidebar-search");
@@ -14,19 +14,21 @@ searchBtn.addEventListener("click", () => {
   modalContents.innerHTML = "";
 });
 
-modalOverlay.addEventListener("click", () => {
-  modalOverlay.style.display = "none";
-  modal.style.display = "none";
+modalOverlay.addEventListener("click", (e) => {
+  if (e.target === modalOverlay) {
+    closeSearchModal();
+  }
 });
 
-modal.addEventListener("click", (e) => {
-  e.stopPropagation();
-});
+function closeSearchModal() {
+  modalOverlay.style.display = "none";
+  modal.style.display = "none";
+}
 
 // 검색 버튼
 searchForm.addEventListener("submit", async (e) => {
   const searchDocInput = document.querySelector(".modal-search input");
-  const term = searchDocInput.value.replace(/\s/g, ""); // 검색어 전달
+  const term = searchDocInput.value.replace(/\s/g, "").toLowerCase(); // 검색어 전달
 
   e.preventDefault();
   if (term === "") {
@@ -34,22 +36,26 @@ searchForm.addEventListener("submit", async (e) => {
     searchDocInput.value = "";
     return;
   }
+  try {
+    //  검색 결과들
+    const allDocs = await handleGetAllDocs();
+    const results = searchDocs(allDocs, term);
 
-  //  검색 결과들
-  const allDocs = await handleGetAllDocs();
-  const results = searchDocs(allDocs, term);
+    let contents = "";
+    results.forEach((doc) => {
+      contents += `
+          <a class="modal-content" href="/documents/${doc.id}" data-url="${doc.id}">
+              <span>${doc.title}</span>
+          </a>
+      `;
+    });
 
-  let contents = "";
-  results.forEach((doc) => {
-    contents += `
-        <a class="modal-content" href="/documents/${doc.id}" data-url="${doc.id}">
-            <span>${doc.title}</span>
-        </a>
-    `;
-  });
-
-  modalContents.innerHTML = contents || "정보를 찾지 못했습니다.";
-  searchDocInput.value = "";
+    modalContents.innerHTML = contents || "정보를 찾지 못했습니다.";
+    searchDocInput.value = "";
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    modalContents.textContent = "오류가 발생했습니다. 다시 시도해주세요.";
+  }
 });
 
 function searchDocs(docs, searchTerm) {
@@ -58,7 +64,7 @@ function searchDocs(docs, searchTerm) {
   // 각 문서에 대해 확인
 
   docs.forEach((doc) => {
-    const title = doc.title.replace(/\s/g, "");
+    const title = doc.title.replace(/\s/g, "").toLowerCase();
     // 검색어가 제목이나 내용에 포함되어 있으면 결과에 추가
     if (title.includes(searchTerm)) {
       results.push(doc);
@@ -82,7 +88,6 @@ modalContents.addEventListener("click", (e) => {
   if (clickedElement) {
     const id = clickedElement.dataset.url;
     loadTextEditor(id);
-    modalOverlay.style.display = "none";
-    modal.style.display = "none";
+    closeSearchModal();
   }
 });
