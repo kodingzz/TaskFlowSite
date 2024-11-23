@@ -235,7 +235,7 @@ document.querySelector("#editor").addEventListener(
         // }
       }
     }
-  }, 5000)
+  }, 3000)
 );
 
 // 텍스트 에디터 시작시 새로운 텍스트 블록을 자동으로 생성

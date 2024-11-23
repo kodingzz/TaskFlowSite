@@ -5,6 +5,7 @@ import {
 } from "./client.js";
 let docList = [];
 const sidebarItems = document.querySelector(".sidebar-nav ul");
+let currentParentId = null;
 
 // 모든 문서 랜더링
 export async function loadSidebarDocs() {
@@ -50,11 +51,12 @@ function makeItem(doc, depth = 1) {
   const btnRemove = document.createElement("button");
   btnRemove.classList.add("sidebar-item-remove");
 
-  // depth가 3이상이면 추가버튼 x
-  if (depth < 3) {
+  // depth가 5이상이면 추가버튼 x
+  if (depth < 5) {
     divContent.prepend(btnToggle);
     divBtns.appendChild(btnAdd);
   }
+
   divBtns.appendChild(btnRemove);
 
   divContent.appendChild(a);
@@ -62,11 +64,28 @@ function makeItem(doc, depth = 1) {
 
   li.appendChild(divContent);
 
-  if (doc.documents.length !== 0 && depth < 3) {
-    const childList = document.createElement("ul");
+  const childList = document.createElement("ul");
+  if (doc.documents.length !== 0 && depth < 5) {
     doc.documents.forEach((childDoc) =>
       childList.appendChild(makeItem(childDoc, depth + 1))
     );
+    li.appendChild(childList);
+  } else if (doc.documents.length === 0) {
+    const li2 = document.createElement("li");
+    li2.classList.add("sidebar-item");
+
+    const closeArr = localStorage.getItem("closeArr");
+    const convertedCloseArr = closeArr ? JSON.parse(closeArr) : [];
+
+    if (convertedCloseArr.includes(doc.id.toString()))
+      li2.classList.add("close");
+
+    const divContent = document.createElement("div");
+    divContent.classList.add("sidebar-item-base");
+    divContent.textContent = "하위 페이지 없음";
+
+    li2.appendChild(divContent);
+    childList.appendChild(li2);
     li.appendChild(childList);
   }
   return li;
@@ -146,15 +165,15 @@ export async function loadTextEditor(id) {
   document.querySelector("#editor").innerHTML = editorAllInfo;
 
   // 경로에 있는 문서 클릭시 이동
-  document.querySelector(".editor-dir").addEventListener("click", (e) => {
+  document.querySelector(".editor-dir").addEventListener("click", async (e) => {
     e.preventDefault();
     const id = e.target.dataset.url;
     if (!id) {
       history.pushState({ page: "/" }, "", `/`); // root로 이동
-      loadTextEditor("Content");
+      await loadTextEditor("Content");
     } else {
       history.pushState({ page: id }, "", `/documents/${id}`);
-      loadTextEditor(id);
+      await loadTextEditor(id);
     }
   });
 
@@ -172,7 +191,7 @@ export async function loadTextEditor(id) {
 
   loadEditorScript();
 
-  const isMenuClose = localStorage.getItem("isMenuClose");
+  const isMenuClose = localStorage.getItem("isSidebarClose");
   if (isMenuClose === "true") {
     makeOpenSidebarBtn();
     handleMenuClose();
@@ -208,8 +227,26 @@ export async function loadTextEditor(id) {
       }
     });
   }
+  // 동적 생성된 문서 삭제시 삭제 모달창
+  const editorTopDeleteBtn = document.querySelector("#deleteDocBtn");
+
+  editorTopDeleteBtn?.addEventListener("click", () => {
+    id && showRemoveDocModal(id);
+  });
 }
 
+// 특정 문서  삭제 모달창
+export function showRemoveDocModal(parentId) {
+  currentParentId = parentId;
+  modalDeleteOverlay.style.display = "block";
+  modalDelete.style.display = "flex";
+  openModal("<span>문서를 삭제하시겠습니까?</span>", async () => {
+    await handleDeleteDoc(currentParentId);
+    history.pushState({ page: "/" }, "", `/`); // root로 이동
+    loadTextEditor("Content");
+    loadSidebarDocs(); // 모든 문서 다시 로드
+  });
+}
 // 문서 경로 만들기
 async function makePath(id) {
   let dirContent = '<a href="/">Home</a>';

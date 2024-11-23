@@ -12,6 +12,7 @@ import {
   loadSidebarDocs,
   loadEditorScript,
   openModal,
+  showRemoveDocModal,
 } from "./utils.js";
 
 const sidebarItems = document.querySelector(".sidebar-nav ul");
@@ -102,22 +103,7 @@ sidebarItems.addEventListener("click", async (e) => {
 const modalDeleteOverlay = document.querySelector(".modal-delete-overlay");
 const modalDelete = document.querySelector(".modal-delete");
 
-let currentParentId = null;
-
-// 특정 문서 삭제 버튼 클릭시 삭제 모달창
-function showRemoveDocModal(parentId) {
-  currentParentId = parentId;
-  modalDeleteOverlay.style.display = "block";
-  modalDelete.style.display = "flex";
-  openModal("<span>문서를 삭제하시겠습니까?</span>", async () => {
-    await handleDeleteDoc(currentParentId);
-    history.pushState({ page: "/" }, "", `/`); // root로 이동
-    loadTextEditor("Content");
-    loadSidebarDocs(); // 모든 문서 다시 로드
-  });
-}
-
-// 모든 문서 제거 함수
+// 전체 문서 제거 함수
 async function deleteAllDocs(documents) {
   for (const doc of documents) {
     const currentId = doc.id;
@@ -143,16 +129,7 @@ function showRemoveAllDocModal() {
   });
 }
 
-// 동적 생성된 문서 삭제시 삭제 모달창
-const editorTopDeleteBtn = document.querySelector("#deleteDocBtn");
-
-editorTopDeleteBtn &&
-  editorTopDeleteBtn.addEventListener("click", () => {
-    const parentId = window.location.href.split("/").pop();
-    parentId && showRemoveDocModal(parentId);
-  });
-
-// 모든 문서 삭제
+// 전체 문서 삭제
 const deleteAllBtn = document.querySelector("#deleteDocAllBtn");
 
 deleteAllBtn.addEventListener("click", () => {

@@ -29,16 +29,18 @@
 #sidebar {
   transition: all 0.2s;
 }
-
+.sidebar-item-base {
+  opacity: 0.5;
+  padding: 10px;
+  padding-left: 24px;
+}
 .sidebar-item ul {
-  padding-left: 1rem;
+  padding-left: 0.8rem;
   transition: all 0.2;
   z-index: 1;
   overflow: hidden;
 }
-.sidebar-item > ul .sidebar-item > ul {
-  padding-left: 40px;
-}
+
 .sidebar-item.close > ul {
   height: 1px;
   opacity: 0;
