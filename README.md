@@ -1,5 +1,8 @@
 # 프로그래머스 TEAM-4
 
+    
+## 🏋 배포 주소: https://nootion.netlify.app
+
 ## 💁 프로젝트 목표 및 주제
 
 마크다운 기반으로 동적으로 텍스트 블록을 생성하는 바닐라 자바스크립트 SPA 문서 편집 사이트 제작
@@ -64,5 +67,4 @@
     ┣ 📜.gitignore
     ┣ 📜README.md
     ┗ 📜index.html
-    
-## 🏋 배포 주소: https://nootion.netlify.app
+
