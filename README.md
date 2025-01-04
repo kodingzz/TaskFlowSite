@@ -1,7 +1,7 @@
 # nootion - 문서 관리 및 편집 사이트 
- 
-## 🏋 [배포 주소]: (https://nootion.netlify.app)
-## 🏋 [시연 영상]: (https://youtu.be/4374h_sIOdg)
+
+## [🏋배포 주소](https://nootion.netlify.app)
+## [🏋시연 영상](https://youtu.be/4374h_sIOdg)
 
 ## 💁 프로젝트 목표 및 주제
 
